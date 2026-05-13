@@ -1,0 +1,306 @@
+/* ── BASE ── */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  border-bottom: 1px solid #eee;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo { font-size: 20px; font-weight: bold; cursor: pointer; }
+
+/* ── NAV LINKS ── */
+.nav-links {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  padding-bottom: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.nav-underline {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #1a1108;
+  border-radius: 2px;
+  transition: width 0.28s ease;
+}
+
+.nav-link:hover .nav-underline,
+.nav-link.active .nav-underline { width: 100%; }
+.nav-link:hover { color: #1a1108; }
+
+/* ── SHOP DROPDOWN ── */
+.shop-dropdown-wrapper {
+  position: relative;
+}
+
+.shop-trigger {
+  user-select: none;
+}
+
+.shop-arrow {
+  font-size: 10px;
+  color: #888;
+  transition: transform 0.22s ease;
+  display: inline-block;
+  margin-left: 2px;
+}
+
+.shop-arrow.open { transform: rotate(180deg); }
+
+.shop-mega-menu {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #e0d5c5;
+  border-radius: 14px;
+  padding: 12px 8px;
+  min-width: 220px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  z-index: 9999;
+  animation: fadeDown 0.18s ease;
+}
+
+.shop-menu-title {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c8963a;
+  font-weight: 600;
+  padding: 2px 12px 10px;
+  border-bottom: 1px solid #f0ebe3;
+  margin-bottom: 6px;
+}
+
+.shop-menu-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.shop-menu-item:hover { background: #faf7f2; }
+
+.shop-menu-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1108;
+  font-family: 'Jost', sans-serif;
+}
+
+.shop-menu-desc {
+  font-size: 11px;
+  color: #8a7a6a;
+  margin-top: 2px;
+}
+
+/* ── ICONS ROW ── */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 24px;
+}
+
+/* ── SEARCH ── */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.search-icon {
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.search-icon:hover { transform: scale(1.15); }
+
+.search-expand {
+  position: relative;
+  max-width: 0;
+  overflow: hidden;
+  transition: max-width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
+  opacity: 0;
+  margin-left: 0;
+}
+
+.search-wrapper.open .search-expand {
+  max-width: 240px;
+  opacity: 1;
+  margin-left: 10px;
+}
+
+.search-input {
+  width: 220px;
+  padding: 7px 14px;
+  border: 1.5px solid #d0c8bc;
+  border-radius: 20px;
+  font-size: 13px;
+  outline: none;
+  font-family: 'Jost', sans-serif;
+  background: #faf9f7;
+  color: #1a1108;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+  border-color: #1a1108;
+  box-shadow: 0 0 0 3px rgba(26,17,8,0.07);
+  background: #fff;
+}
+
+.search-input::placeholder { color: #aaa; font-size: 12px; }
+
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  background: #fff;
+  border: 1px solid #e0d5c5;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  z-index: 9999;
+  overflow: hidden;
+  animation: fadeDown 0.18s ease;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.search-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: 'Jost', sans-serif;
+}
+.search-result-item:hover { background: #faf7f2; }
+
+.search-result-name {
+  font-size: 13px; color: #1a1108;
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; max-width: 140px;
+}
+
+.search-result-price { font-size: 12px; color: #8a7a6a; font-weight: 500; }
+
+.search-no-result {
+  padding: 12px 14px; font-size: 13px;
+  color: #aaa; text-align: center;
+  font-family: 'Jost', sans-serif;
+}
+
+/* ── PROFILE ── */
+.profile-icon { cursor: pointer; }
+.profile-wrapper { position: relative; }
+
+.profile-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #1a1108; color: #e8d5a3;
+  font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; letter-spacing: 1px;
+  font-family: 'Jost', sans-serif;
+}
+
+.profile-dropdown {
+  position: absolute; top: 44px; right: 0;
+  background: #fff; border: 1px solid #e0d5c5;
+  border-radius: 10px; padding: 0.5rem 0;
+  min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  z-index: 9999; font-family: 'Jost', sans-serif;
+}
+
+.dropdown-name { font-size: 14px; font-weight: 500; color: #1a1108; padding: 0.6rem 1rem 0.1rem; }
+.dropdown-email { font-size: 11px; color: #8a7a6a; padding: 0 1rem 0.6rem; }
+.dropdown-divider { border: none; border-top: 1px solid #e0d5c5; margin: 0.2rem 0; }
+
+.dropdown-item {
+  font-size: 13px; color: #1a1108;
+  padding: 0.5rem 1rem; cursor: pointer; transition: background 0.15s;
+}
+.dropdown-item:hover { background: #faf7f2; }
+.dropdown-item.logout { color: #c0392b; }
+.dropdown-item.logout:hover { background: #fdf0ef; }
+
+/* ── CART ── */
+.cart-wrapper {
+  position: relative; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.cart-count {
+  position: absolute; top: -8px; right: -12px;
+  background: red; color: white;
+  font-size: 11px; min-width: 18px; height: 18px;
+  border-radius: 50%; display: flex;
+  justify-content: center; align-items: center;
+  font-weight: bold; padding: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PASTE THESE AT THE BOTTOM OF YOUR EXISTING Navbar.css
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Logo circle in navbar */
+.navbar-logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(124, 58, 237, 0.30);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.08);
+  transition: box-shadow 0.25s;
+}
+
+.navbar-logo-circle:hover {
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.18);
+}
+
+.navbar-logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 50%;
+  display: block;
+}
+
+.navbar-logo-fallback {
+  font-size: 1.25rem;
+  line-height: 1;
+}

@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap');
+
+
+.otp-wrap {
+  font-family: 'Jost', sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* LEFT */
+.otp-left {
+  width: 38%;
+  background: linear-gradient(160deg, #2d1f0a 0%, #1a1108 60%, #0d0a05 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  border-right: 1px solid #3a2a10;
+}
+
+.candle-flame {
+  width: 14px; height: 30px;
+  background: radial-gradient(ellipse at 50% 80%, #fff8e1 0%, #ffcc44 40%, #ff8800 80%, transparent 100%);
+  border-radius: 50% 50% 30% 30%;
+  margin: 0 auto;
+  animation: flicker 2s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+  0%  { transform: scaleX(1) rotate(-1deg); }
+  100%{ transform: scaleX(0.9) scaleY(1.05) rotate(1deg); }
+}
+
+.candle-body {
+  width: 36px; height: 80px;
+  background: linear-gradient(90deg, #c8a96e 0%, #e8d5a3 40%, #d4bc85 70%, #b89a5a 100%);
+  border-radius: 3px 3px 4px 4px;
+  margin: 2px auto 0;
+}
+
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  color: #e8d5a3; font-size: 22px; font-weight: 300;
+  letter-spacing: 4px; text-transform: uppercase;
+  margin-top: 1.5rem; text-align: center;
+}
+
+.brand-tagline {
+  color: #8a6a3a; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; margin-top: 0.4rem;
+  text-align: center; font-weight: 300;
+}
+
+.divider-line {
+  width: 40px; height: 1px;
+  background: #3a2a10; margin: 1.5rem auto;
+}
+
+.steps { width: 100%; }
+.step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1rem; }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #3a2a10; color: #6a4e28;
+  font-size: 11px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-num.act { background: #c8963a; color: #1a1108; }
+.step.done .step-num { background: #2a4a1a; color: #6abf4b; }
+.step-text { font-size: 12px; color: #6a4e28; line-height: 1.5; }
+.step-text strong { color: #e8d5a3; font-weight: 400; display: block; }
+
+/* RIGHT */
+.otp-right {
+  flex: 1;
+  background: #faf7f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.otp-icon { font-size: 36px; margin-bottom: 0.8rem; }
+
+.otp-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; font-weight: 600;
+  color: #1a1108; margin-bottom: 0.4rem;
+  text-align: center;
+}
+
+.otp-sub {
+  font-size: 13px; color: #8a7a6a;
+  text-align: center; line-height: 1.7;
+  margin-bottom: 1.5rem; font-weight: 300;
+}
+
+.otp-sub strong { color: #1a1108; font-weight: 500; }
+
+.error-msg {
+  color: #c0392b; font-size: 13px;
+  background: #fdf0ef; border: 1px solid #f5c6c2;
+  padding: 8px 14px; border-radius: 6px;
+  margin-bottom: 1rem; width: 100%; max-width: 360px;
+  text-align: center;
+}
+
+.success-msg {
+  color: #27ae60; font-size: 13px;
+  background: #eafaf1; border: 1px solid #b2dfdb;
+  padding: 8px 14px; border-radius: 6px;
+  margin-bottom: 1rem; width: 100%; max-width: 360px;
+  text-align: center;
+}
+
+/* 6 OTP BOXES */
+.otp-row {
+  display: flex; gap: 10px;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.otp-box {
+  width: 48px; height: 56px;
+  border: 1.5px solid #e0d5c5;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 22px; font-weight: 500;
+  color: #1a1108;
+  font-family: 'Jost', sans-serif;
+  background: #fff;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.otp-box:focus { border-color: #c8963a; }
+
+.resend-link {
+  text-align: center; font-size: 12px;
+  color: #8a7a6a; margin-bottom: 1.5rem; cursor: default;
+}
+
+.resend-link span {
+  color: #c8963a; cursor: pointer; font-weight: 500;
+}
+
+.btn-otp {
+  width: 100%; max-width: 360px;
+  padding: 13px;
+  background: #1a1108; color: #e8d5a3;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px; letter-spacing: 2px;
+  text-transform: uppercase;
+  border: none; border-radius: 6px;
+  cursor: pointer; transition: background 0.2s;
+  display: block;
+}
+
+.btn-otp:hover { background: #2d1f0a; }
+.btn-otp:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.back-row {
+  margin-top: 1rem; font-size: 12px;
+  color: #8a7a6a; text-align: center;
+}
+
+.back-row span { color: #c8963a; cursor: pointer; font-weight: 500; }

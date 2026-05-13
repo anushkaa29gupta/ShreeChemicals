@@ -1,0 +1,365 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Jost:wght@300;400;500;600&display=swap');
+
+/* ─── ROOT ─────────────────────────────────────────── */
+.oc-root {
+  min-height: 100vh;
+  background: #faf7f2;
+  font-family: 'Jost', sans-serif;
+}
+
+/* ─── HERO ─────────────────────────────────────────── */
+.oc-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1108 0%, #2d1f0a 50%, #3d2b0f 100%);
+  padding: 3.5rem 2rem 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.oc-hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  pointer-events: none;
+}
+.ob1 { width: 300px; height: 300px; background: #c8963a; top: -80px; left: -60px; }
+.ob2 { width: 240px; height: 240px; background: #e8a84a; bottom: -60px; right: -40px; }
+.ob3 { width: 160px; height: 160px; background: #f0c070; top: 10px; right: 30%; }
+
+.oc-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ── Animated SVG checkmark ── */
+.oc-check-ring {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.5rem;
+}
+
+.oc-checkmark {
+  width: 100%;
+  height: 100%;
+}
+
+.oc-check-circle {
+  stroke: #c8963a;
+  stroke-width: 2.5;
+  fill: rgba(200, 150, 58, 0.12);
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: drawCircle 0.7s ease forwards;
+}
+
+.oc-check-tick {
+  stroke: #e8b85a;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: drawTick 0.4s ease 0.6s forwards;
+}
+
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes drawTick {
+  to { stroke-dashoffset: 0; }
+}
+
+.oc-hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #e8d5a3;
+  margin: 0;
+  animation: fadeUp 0.5s ease 0.9s both;
+}
+
+.oc-hero-sub {
+  font-size: 15px;
+  color: #a89070;
+  margin: 0;
+  font-weight: 400;
+  animation: fadeUp 0.5s ease 1.05s both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── BODY ──────────────────────────────────────────── */
+.oc-body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── WHATSAPP CARD ─────────────────────────────────── */
+.oc-whatsapp-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e0d5c5;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  animation: fadeUp 0.5s ease 1.2s both;
+}
+
+.oc-wa-icon-wrap {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.oc-wa-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.oc-wa-content {
+  flex: 1;
+}
+
+.oc-wa-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1108;
+  margin: 0 0 0.6rem;
+}
+
+.oc-wa-msg {
+  font-size: 14px;
+  color: #6a5a4a;
+  line-height: 1.65;
+  margin: 0 0 1.4rem;
+}
+
+/* ── Steps ── */
+.oc-wa-steps {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.oc-wa-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a3a2a;
+  background: #faf7f2;
+  border: 1px solid #e0d5c5;
+  border-radius: 20px;
+  padding: 6px 14px 6px 6px;
+}
+
+.oc-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c8963a, #e8b85a);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.oc-step-arrow {
+  font-size: 14px;
+  color: #c8963a;
+  font-weight: 600;
+}
+
+/* ─── ORDER SUMMARY CARD ────────────────────────────── */
+.oc-summary-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e0d5c5;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  overflow: hidden;
+  animation: fadeUp 0.5s ease 1.35s both;
+}
+
+.oc-summary-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1108;
+  margin: 0;
+  padding: 1rem 1.4rem;
+  background: #faf7f2;
+  border-bottom: 1px solid #e0d5c5;
+}
+
+.oc-summary-items {
+  padding: 0.6rem 1.4rem;
+}
+
+.oc-summary-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f0e8;
+  font-size: 13px;
+  color: #4a3a2a;
+}
+.oc-summary-row:last-child { border-bottom: none; }
+
+.oc-summary-name { font-weight: 500; }
+.oc-summary-qty  { color: #8a7a6a; font-size: 12px; }
+.oc-summary-price {
+  font-weight: 600;
+  color: #c8963a;
+  white-space: nowrap;
+}
+
+.oc-summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.4rem;
+  background: #faf7f2;
+  border-top: 1px solid #e0d5c5;
+  font-weight: 700;
+  font-size: 15px;
+  color: #c8963a;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* ─── ACTION BUTTONS ────────────────────────────────── */
+.oc-actions {
+  display: flex;
+  gap: 12px;
+  animation: fadeUp 0.5s ease 1.5s both;
+}
+
+.oc-btn-orders {
+  flex: 1;
+  padding: 14px 20px;
+  background: #1a1108;
+  color: #e8d5a3;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  text-align: center;
+}
+.oc-btn-orders:hover {
+  background: #2d1f0a;
+  transform: translateY(-1px);
+}
+
+.oc-btn-shop {
+  flex: 1;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #c8963a, #e8b85a);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(200,150,58,0.35);
+}
+.oc-btn-shop:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+/* ─── REASSURANCE STRIP ─────────────────────────────── */
+.oc-reassure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0d5c5;
+  padding: 1rem 1.5rem;
+  animation: fadeUp 0.5s ease 1.65s both;
+}
+
+.oc-reassure-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6a5a4a;
+  text-align: center;
+}
+
+.oc-reassure-icon {
+  font-size: 22px;
+}
+
+.oc-reassure-divider {
+  width: 1px;
+  height: 40px;
+  background: #e0d5c5;
+  flex-shrink: 0;
+}
+
+/* ─── RESPONSIVE ────────────────────────────────────── */
+@media (max-width: 560px) {
+  .oc-hero { padding: 2.5rem 1.2rem 3.5rem; }
+  .oc-hero-title { font-size: 28px; }
+  .oc-body { padding: 1.5rem 1rem 4rem; gap: 1.2rem; }
+
+  .oc-whatsapp-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem 1.2rem;
+  }
+  .oc-wa-steps { justify-content: center; }
+  .oc-step-arrow { display: none; }
+
+  .oc-actions { flex-direction: column; }
+  .oc-btn-orders,
+  .oc-btn-shop  { width: 100%; }
+
+  .oc-reassure { padding: 0.8rem 1rem; }
+  .oc-reassure-item { font-size: 11px; }
+  .oc-reassure-icon { font-size: 18px; }
+}

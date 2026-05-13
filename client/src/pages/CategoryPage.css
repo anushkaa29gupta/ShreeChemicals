@@ -1,0 +1,121 @@
+/* ── CATEGORY HERO BANNER ── */
+.category-hero {
+  position: relative;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  overflow: hidden;
+}
+
+.candles-hero {
+  background: linear-gradient(135deg, #2d1f0a 0%, #c8963a 60%, #e8d5a3 100%);
+}
+
+.tea-hero {
+  background: linear-gradient(135deg, #1a3a2a 0%, #2e7d4f 60%, #a8d5b5 100%);
+}
+
+.incense-hero {
+  background: linear-gradient(135deg, #2a1a3a 0%, #7d4f9a 60%, #d5b5e8 100%);
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Jost', sans-serif;
+  transition: background 0.2s;
+  backdrop-filter: blur(6px);
+}
+.back-btn:hover { background: rgba(255,255,255,0.35); }
+
+.category-hero-text { position: relative; z-index: 1; }
+
+.category-emoji {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+}
+
+.category-hero-text h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.category-hero-text p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 1px;
+  font-family: 'Jost', sans-serif;
+}
+
+/* ── EMPTY STATE ── */
+.empty-category {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 15px;
+  color: #8a7a6a;
+  font-family: 'Jost', sans-serif;
+}
+
+/* ── TEA WEIGHT SELECTOR ── */
+.weight-selector {
+  margin: 8px 0;
+  text-align: left;
+}
+
+.weight-label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #8a7a6a;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.weight-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.weight-btn {
+  padding: 4px 10px;
+  border: 1.5px solid #e0d5c5;
+  border-radius: 20px;
+  background: #faf7f2;
+  color: #4a3a2a;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Jost', sans-serif;
+  transition: all 0.18s ease;
+}
+
+.weight-btn:hover {
+  border-color: #c8963a;
+  color: #c8963a;
+}
+
+.weight-btn.selected {
+  background: #1a1108;
+  color: #e8d5a3;
+  border-color: #1a1108;
+  font-weight: 500;
+}

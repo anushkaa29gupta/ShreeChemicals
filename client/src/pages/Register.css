@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.login-wrap {
+  font-family: 'Jost', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* LEFT PANEL */
+.login-left {
+  width: 42%;
+  background: linear-gradient(160deg, #2d1f0a 0%, #1a1108 60%, #0d0a05 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border-right: 1px solid #3a2a10;
+}
+
+.candle-flame {
+  width: 14px;
+  height: 30px;
+  background: radial-gradient(ellipse at 50% 80%, #fff8e1 0%, #ffcc44 40%, #ff8800 80%, transparent 100%);
+  border-radius: 50% 50% 30% 30%;
+  margin: 0 auto;
+  animation: flicker 2s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+  0%  { transform: scaleX(1) rotate(-1deg); }
+  100%{ transform: scaleX(0.9) scaleY(1.05) rotate(1deg); }
+}
+
+.candle-body {
+  width: 36px;
+  height: 80px;
+  background: linear-gradient(90deg, #c8a96e 0%, #e8d5a3 40%, #d4bc85 70%, #b89a5a 100%);
+  border-radius: 3px 3px 4px 4px;
+  margin: 2px auto 0;
+}
+
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  color: #e8d5a3;
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.brand-tagline {
+  color: #8a6a3a;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+  text-align: center;
+  font-weight: 300;
+}
+
+.divider-line {
+  width: 40px;
+  height: 1px;
+  background: #3a2a10;
+  margin: 1.5rem auto;
+}
+
+.left-quote {
+  font-family: 'Cormorant Garamond', serif;
+  color: #6a4e28;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.7;
+  padding: 0 1rem;
+}
+
+/* RIGHT PANEL */
+.login-right {
+  flex: 1;
+  background: #faf7f2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 2.5rem;
+}
+
+.login-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #1a1108;
+  margin-bottom: 0.3rem;
+}
+
+.login-sub {
+  font-size: 13px;
+  color: #8a7a6a;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.field-group { margin-bottom: 1rem; }
+
+.field-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8a7a6a;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #e0d5c5;
+  border-radius: 6px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  color: #1a1108;
+  background: #fff;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.field-input:focus { border-color: #c8963a; }
+
+.forgot-link {
+  font-size: 12px;
+  color: #c8963a;
+  display: block;
+  text-align: right;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 13px;
+  background: #1a1108;
+  color: #e8d5a3;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 1rem;
+}
+
+.btn-login:hover { background: #2d1f0a; }
+
+.divider-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0.5rem 0 1rem;
+}
+
+.divider-or span { font-size: 12px; color: #c0b09a; }
+.divider-or::before,
+.divider-or::after { content: ''; flex: 1; height: 1px; background: #e0d5c5; }
+
+.signup-row { text-align: center; font-size: 13px; color: #8a7a6a; }
+.signup-link { color: #c8963a; cursor: pointer; font-weight: 500; }
+
+/* ADD THESE to Register.css (keep all Login.css styles too) */
+
+.reg-wrap { font-family: 'Jost', sans-serif; display: flex; min-height: 100vh; overflow-y: auto; }
+.reg-left { width: 38%; background: linear-gradient(160deg, #2d1f0a 0%, #1a1108 60%, #0d0a05 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+.reg-right { flex: 1; padding: 2.5rem; overflow-y: auto; background: #faf7f2; }
+.reg-heading { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: #1a1108; margin-bottom: 0.3rem; }
+.reg-sub { font-size: 13px; color: #8a7a6a; margin-bottom: 1.5rem; font-weight: 300; }
+
+.steps { margin-top: 2rem; width: 100%; }
+.step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1rem; }
+.step-num { width: 22px; height: 22px; border-radius: 50%; background: #3a2a10; color: #c8963a; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-num.active { background: #c8963a; color: #1a1108; }
+.step-text { font-size: 12px; color: #6a4e28; line-height: 1.5; }
+.step-text strong { color: #e8d5a3; font-weight: 400; display: block; }
+
+.section-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #c8963a; font-weight: 500; margin: 1.2rem 0 0.8rem; border-bottom: 1px solid #e8d5a3; padding-bottom: 5px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field-g { margin-bottom: 0.8rem; }
+.f-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #8a7a6a; font-weight: 500; display: block; margin-bottom: 5px; }
+.f-input { width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #e0d5c5; border-radius: 6px; font-family: 'Jost', sans-serif; font-size: 13px; color: #1a1108; background: #fff; outline: none; }
+.f-input:focus { border-color: #c8963a; }
+
+.btn-reg { width: 100%; padding: 12px; background: #1a1108; color: #e8d5a3; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; border: none; border-radius: 6px; cursor: pointer; margin-top: 1.2rem; }
+.btn-reg:hover { background: #2d1f0a; }
+.signin-row { text-align: center; font-size: 13px; color: #8a7a6a; margin-top: 1rem; }
+.signin-lnk { color: #c8963a; cursor: pointer; font-weight: 500; }
+
+.f-optional { font-size: 10px; color: #bbb; font-weight: 400; margin-left: 4px; }
+
+.delivery-note {
+  background: #faf7f2;
+  border: 1px solid #e0d5c5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #8a7a6a;
+  margin: 0.5rem 0 1rem;
+  line-height: 1.5;
+}
