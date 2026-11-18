@@ -2,9 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
 
-const CATEGORIES = ["Candles", "Tea", "Incense"];
-const WEIGHT_OPTS = ["100g", "250g", "500g", "1kg"];
-const categoryIcon = { Candles: "🕯️", Tea: "🍵", Incense: "🌿" };
+const CATEGORIES       = ["Candles", "Tea", "Incense"];
+const WEIGHT_OPTS      = ["100g", "250g", "500g", "1kg"];
+const CANDLE_CATS      = ["Plain", "Plain + Aroma", "Design", "Design + Aroma"];
+const CANDLE_SIZES     = ["small", "medium", "large"];
+const categoryIcon     = { Candles: "🕯️", Tea: "🍵", Incense: "🌿" };
+const sizeLabel        = { small: "Small", medium: "Medium", large: "Large" };
+const sizeEmoji        = { small: "🕯", medium: "🕯️", large: "🕯️🕯️" };
 
 // ── HOOK: live order notifications (polls every 30s) ─────────────────────────
 const useOrderNotifications = (token) => {
@@ -94,112 +98,57 @@ const OrdersTab = ({ token }) => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const init = async () => { await loadOrders(); };
-    init();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { loadOrders(); }, []); // eslint-disable-line
 
   const handleAction = async (orderId, action) => {
     try {
       const res  = await fetch(`http://localhost:5000/api/orders/${action}/${orderId}`, {
-        method:  "PUT",
-        headers: { Authorization: `Bearer ${token}` },
+        method: "PUT", headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok) {
-        const nextStatus =
-          action === "approve" ? "approved" :
-          action === "decline" ? "declined" :
-          action === "deliver" ? "delivered" : action;
-
-        setOrders(prev =>
-          prev.map(o => o._id === orderId ? { ...o, status: nextStatus } : o)
-        );
+        const nextStatus = action === "approve" ? "approved" : action === "decline" ? "declined" : action === "deliver" ? "delivered" : action;
+        setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: nextStatus } : o));
         setActionMsg(data.message);
       }
-    } catch {
-      setActionMsg("Action failed.");
-    }
+    } catch { setActionMsg("Action failed."); }
   };
 
   const handleClearAll = async () => {
     try {
       const res  = await fetch("http://localhost:5000/api/orders/clear-all", {
-        method:  "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        method: "DELETE", headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (res.ok) {
-        setActionMsg(data.message);
-        setClearConfirm(false);
-        loadOrders();
-      }
-    } catch {
-      setActionMsg("Failed to clear orders.");
-    }
+      if (res.ok) { setActionMsg(data.message); setClearConfirm(false); loadOrders(); }
+    } catch { setActionMsg("Failed to clear orders."); }
   };
 
   const openWhatsApp = (order) => {
     const phone = (order.customer.whatsapp || order.customer.phone || "").replace(/\D/g, "");
-    const items = order.items
-      .map(i => `• ${i.name} x${i.quantity} = ₹${i.price * i.quantity}`)
-      .join("\n");
-    const msg = encodeURIComponent(
-      `Hello ${order.customer.firstName}! 🕯️\n\nThank you for your order at Shree Chemicals.\n\n*Order Summary:*\n${items}\n\n*Total: ₹${order.totalAmount}*\n\nPlease complete your payment by scanning our QR code. Once payment screenshot is received, we'll confirm your order.\n\nExpected delivery: ${order.deliveryDate}\n\nThank you! 🙏`
-    );
+    const items = order.items.map(i => `• ${i.name}${i.size ? ` (${i.size})` : ""}${i.weight ? ` (${i.weight})` : ""} x${i.quantity} = ₹${i.price * i.quantity}`).join("\n");
+    const msg = encodeURIComponent(`Hello ${order.customer.firstName}! 🕯️\n\nThank you for your order at Shree Chemicals.\n\n*Order Summary:*\n${items}\n\n*Total: ₹${order.totalAmount}*\n\nPlease complete your payment by scanning our QR code. Once payment screenshot is received, we'll confirm your order.\n\nExpected delivery: ${order.deliveryDate}\n\nThank you! 🙏`);
     window.open(`https://wa.me/91${phone}?text=${msg}`, "_blank");
   };
 
-  const statusColor = {
-    pending:   "#f39c12",
-    approved:  "#27ae60",
-    declined:  "#e74c3c",
-    delivered: "#8e44ad",
-  };
-
+  const statusColor = { pending: "#f39c12", approved: "#27ae60", declined: "#e74c3c", delivered: "#8e44ad" };
   const hasPastOrders = orders.some(o => o.status === "delivered" || o.status === "declined");
 
   if (loading) return <div className="adm-loading">Loading orders…</div>;
 
   return (
     <div className="adm-orders-wrap">
-      {actionMsg && (
-        <div className="adm-message" onClick={() => setActionMsg("")}>{actionMsg} ✕</div>
-      )}
-
+      {actionMsg && <div className="adm-message" onClick={() => setActionMsg("")}>{actionMsg} ✕</div>}
       {orders.length > 0 && (
         <div className="adm-orders-summary">
-          <div className="adm-orders-stat">
-            <span className="adm-orders-stat-num">{orders.length}</span>
-            <span className="adm-orders-stat-label">Total</span>
-          </div>
-          <div className="adm-orders-stat">
-            <span className="adm-orders-stat-num" style={{ color: "#f39c12" }}>
-              {orders.filter(o => o.status === "pending").length}
-            </span>
-            <span className="adm-orders-stat-label">Pending</span>
-          </div>
-          <div className="adm-orders-stat">
-            <span className="adm-orders-stat-num" style={{ color: "#27ae60" }}>
-              {orders.filter(o => o.status === "approved").length}
-            </span>
-            <span className="adm-orders-stat-label">Approved</span>
-          </div>
-          <div className="adm-orders-stat">
-            <span className="adm-orders-stat-num" style={{ color: "#8e44ad" }}>
-              {orders.filter(o => o.status === "delivered").length}
-            </span>
-            <span className="adm-orders-stat-label">Delivered</span>
-          </div>
-          <div className="adm-orders-stat">
-            <span className="adm-orders-stat-num" style={{ color: "#e74c3c" }}>
-              {orders.filter(o => o.status === "declined").length}
-            </span>
-            <span className="adm-orders-stat-label">Declined</span>
-          </div>
+          {[["Total", orders.length, ""], ["Pending", orders.filter(o=>o.status==="pending").length, "#f39c12"], ["Approved", orders.filter(o=>o.status==="approved").length, "#27ae60"], ["Delivered", orders.filter(o=>o.status==="delivered").length, "#8e44ad"], ["Declined", orders.filter(o=>o.status==="declined").length, "#e74c3c"]].map(([label, num, color]) => (
+            <div key={label} className="adm-orders-stat">
+              <span className="adm-orders-stat-num" style={color ? { color } : {}}>{num}</span>
+              <span className="adm-orders-stat-label">{label}</span>
+            </div>
+          ))}
         </div>
       )}
-
       {hasPastOrders && (
         <div className="adm-clear-row">
           {clearConfirm ? (
@@ -209,102 +158,59 @@ const OrdersTab = ({ token }) => {
               <button className="adm-btn-cancel" onClick={() => setClearConfirm(false)}>Cancel</button>
             </div>
           ) : (
-            <button className="adm-clear-all-btn" onClick={() => setClearConfirm(true)}>
-              🗑️ Clear Past Orders
-            </button>
+            <button className="adm-clear-all-btn" onClick={() => setClearConfirm(true)}>🗑️ Clear Past Orders</button>
           )}
         </div>
       )}
-
-      {orders.length === 0 ? (
-        <div className="adm-empty"><p>No orders yet.</p></div>
-      ) : (
-        orders.map(order => (
-          <div className="adm-order-card" key={order._id}>
-            <div className="adm-order-header">
-              <div>
-                <span className="adm-order-id">Order #{order._id.slice(-6).toUpperCase()}</span>
-                <span className="adm-order-date">
-                  {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                    day: "numeric", month: "short", year: "numeric",
-                  })}
-                </span>
-              </div>
-              <span
-                className="adm-order-status"
-                style={{
-                  color:  statusColor[order.status],
-                  border: `1px solid ${statusColor[order.status]}`,
-                }}
-              >
-                {order.status.toUpperCase()}
-              </span>
+      {orders.length === 0 ? <div className="adm-empty"><p>No orders yet.</p></div> : orders.map(order => (
+        <div className="adm-order-card" key={order._id}>
+          <div className="adm-order-header">
+            <div>
+              <span className="adm-order-id">Order #{order._id.slice(-6).toUpperCase()}</span>
+              <span className="adm-order-date">{new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
             </div>
-
-            <div className="adm-order-body">
-              <div className="adm-order-customer">
-                <h4>👤 Customer</h4>
-                <p><strong>{order.customer.firstName} {order.customer.lastName}</strong></p>
-                <p>📧 {order.customer.email}</p>
-                <p>📞 {order.customer.phone}</p>
-                {order.customer.alternatePhone && <p>📞 Alt: {order.customer.alternatePhone}</p>}
-                <p>💬 WhatsApp: {order.customer.whatsapp || order.customer.phone}</p>
-                <p>🏠 {order.customer.homeAddress}{order.customer.landmark ? `, ${order.customer.landmark}` : ""}</p>
-                <p>🏙️ {order.customer.city} – {order.customer.pincode}</p>
-                <p>🚚 Delivery by: <strong>{order.deliveryDate}</strong></p>
-              </div>
-
-              <div className="adm-order-items">
-                <h4>🛒 Items</h4>
-                {order.items.map((item, i) => (
-                  <div key={i} className="adm-order-item-row">
-                    <span>{item.name}{item.weight ? ` (${item.weight})` : ""}</span>
-                    <span>×{item.quantity}</span>
-                    <span>₹{(item.price * item.quantity).toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="adm-order-total">
-                  Total: ₹{order.totalAmount.toLocaleString()}
+            <span className="adm-order-status" style={{ color: statusColor[order.status], border: `1px solid ${statusColor[order.status]}` }}>{order.status.toUpperCase()}</span>
+          </div>
+          <div className="adm-order-body">
+            <div className="adm-order-customer">
+              <h4>👤 Customer</h4>
+              <p><strong>{order.customer.firstName} {order.customer.lastName}</strong></p>
+              <p>📧 {order.customer.email}</p>
+              <p>📞 {order.customer.phone}</p>
+              {order.customer.alternatePhone && <p>📞 Alt: {order.customer.alternatePhone}</p>}
+              <p>💬 WhatsApp: {order.customer.whatsapp || order.customer.phone}</p>
+              <p>🏠 {order.customer.homeAddress}{order.customer.landmark ? `, ${order.customer.landmark}` : ""}</p>
+              <p>🏙️ {order.customer.city} – {order.customer.pincode}</p>
+              <p>🚚 Delivery by: <strong>{order.deliveryDate}</strong></p>
+            </div>
+            <div className="adm-order-items">
+              <h4>🛒 Items</h4>
+              {order.items.map((item, i) => (
+                <div key={i} className="adm-order-item-row">
+                  <span>{item.name}{item.size ? ` · ${item.size.charAt(0).toUpperCase() + item.size.slice(1)}` : ""}{item.weight ? ` (${item.weight})` : ""}</span>
+                  <span>×{item.quantity}</span>
+                  <span>₹{(item.price * item.quantity).toLocaleString()}</span>
                 </div>
-
-                {order.feedback?.rating && (
-                  <div className="adm-order-feedback">
-                    <span className="adm-feedback-stars">
-                      {"⭐".repeat(order.feedback.rating)}{"☆".repeat(5 - order.feedback.rating)}
-                    </span>
-                    {order.feedback.comment && (
-                      <p className="adm-feedback-comment">"{order.feedback.comment}"</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="adm-order-actions">
-              <button className="adm-wa-btn" onClick={() => openWhatsApp(order)}>
-                💬 Send WhatsApp QR
-              </button>
-
-              {order.status === "pending" && (
-                <>
-                  <button className="adm-approve-btn" onClick={() => handleAction(order._id, "approve")}>
-                    ✅ Approve Order
-                  </button>
-                  <button className="adm-decline-btn" onClick={() => handleAction(order._id, "decline")}>
-                    ❌ Decline Order
-                  </button>
-                </>
-              )}
-
-              {order.status === "approved" && (
-                <button className="adm-deliver-btn" onClick={() => handleAction(order._id, "deliver")}>
-                  🚚 Mark as Delivered
-                </button>
+              ))}
+              <div className="adm-order-total">Total: ₹{order.totalAmount.toLocaleString()}</div>
+              {order.feedback?.rating && (
+                <div className="adm-order-feedback">
+                  <span className="adm-feedback-stars">{"⭐".repeat(order.feedback.rating)}{"☆".repeat(5 - order.feedback.rating)}</span>
+                  {order.feedback.comment && <p className="adm-feedback-comment">"{order.feedback.comment}"</p>}
+                </div>
               )}
             </div>
           </div>
-        ))
-      )}
+          <div className="adm-order-actions">
+            <button className="adm-wa-btn" onClick={() => openWhatsApp(order)}>💬 Send WhatsApp QR</button>
+            {order.status === "pending" && (<>
+              <button className="adm-approve-btn" onClick={() => handleAction(order._id, "approve")}>✅ Approve Order</button>
+              <button className="adm-decline-btn" onClick={() => handleAction(order._id, "decline")}>❌ Decline Order</button>
+            </>)}
+            {order.status === "approved" && <button className="adm-deliver-btn" onClick={() => handleAction(order._id, "deliver")}>🚚 Mark as Delivered</button>}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
@@ -322,61 +228,35 @@ const FeedbackTab = ({ token }) => {
       const res  = await fetch("http://localhost:5000/api/orders/feedbacks");
       const data = await res.json();
       setFeedbacks(Array.isArray(data) ? data : []);
-    } catch {
-      setMessage("Failed to load feedbacks.");
-    }
+    } catch { setMessage("Failed to load feedbacks."); }
     setLoading(false);
   };
 
-  useEffect(() => { const init = async () => { await loadFeedbacks(); }; init(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { loadFeedbacks(); }, []); // eslint-disable-line
 
   const handleDelete = async (orderId) => {
     try {
-      const res  = await fetch(`http://localhost:5000/api/orders/feedback/${orderId}`, {
-        method:  "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res  = await fetch(`http://localhost:5000/api/orders/feedback/${orderId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (res.ok) {
-        setMessage(data.message);
-        setDeleteConfirm(null);
-        setFeedbacks(prev => prev.filter(f => f._id !== orderId));
-      } else {
-        setMessage(data.message || "Delete failed.");
-      }
-    } catch {
-      setMessage("Server error.");
-    }
+      if (res.ok) { setMessage(data.message); setDeleteConfirm(null); setFeedbacks(prev => prev.filter(f => f._id !== orderId)); }
+      else setMessage(data.message || "Delete failed.");
+    } catch { setMessage("Server error."); }
   };
 
-  const avgRating = feedbacks.length
-    ? (feedbacks.reduce((s, f) => s + f.feedback.rating, 0) / feedbacks.length).toFixed(1)
-    : null;
-
-  const ratingCounts = [5, 4, 3, 2, 1].map(r => ({
-    star:  r,
-    count: feedbacks.filter(f => f.feedback.rating === r).length,
-  }));
+  const avgRating   = feedbacks.length ? (feedbacks.reduce((s, f) => s + f.feedback.rating, 0) / feedbacks.length).toFixed(1) : null;
+  const ratingCounts = [5,4,3,2,1].map(r => ({ star: r, count: feedbacks.filter(f => f.feedback.rating === r).length }));
 
   if (loading) return <div className="adm-loading">Loading reviews…</div>;
 
   return (
     <div className="adm-feedback-wrap">
-      {message && (
-        <div className="adm-message" onClick={() => setMessage("")}>{message} ✕</div>
-      )}
-
-      {/* ── Stats bar ── */}
+      {message && <div className="adm-message" onClick={() => setMessage("")}>{message} ✕</div>}
       {feedbacks.length > 0 && (
         <div className="adm-fb-stats">
           <div className="adm-fb-avg">
             <span className="adm-fb-avg-num">{avgRating}</span>
             <div>
-              <div className="adm-fb-stars">
-                {[1,2,3,4,5].map(s => (
-                  <span key={s} className={s <= Math.round(avgRating) ? "adm-star filled" : "adm-star"}>★</span>
-                ))}
-              </div>
+              <div className="adm-fb-stars">{[1,2,3,4,5].map(s => <span key={s} className={s <= Math.round(avgRating) ? "adm-star filled" : "adm-star"}>★</span>)}</div>
               <span className="adm-fb-count">{feedbacks.length} verified review{feedbacks.length !== 1 ? "s" : ""}</span>
             </div>
           </div>
@@ -384,96 +264,50 @@ const FeedbackTab = ({ token }) => {
             {ratingCounts.map(({ star, count }) => (
               <div key={star} className="adm-fb-bar-row">
                 <span className="adm-fb-bar-label">{star}★</span>
-                <div className="adm-fb-bar-track">
-                  <div
-                    className="adm-fb-bar-fill"
-                    style={{ width: feedbacks.length ? `${(count / feedbacks.length) * 100}%` : "0%" }}
-                  />
-                </div>
+                <div className="adm-fb-bar-track"><div className="adm-fb-bar-fill" style={{ width: feedbacks.length ? `${(count/feedbacks.length)*100}%` : "0%" }} /></div>
                 <span className="adm-fb-bar-count">{count}</span>
               </div>
             ))}
           </div>
         </div>
       )}
-
       {feedbacks.length === 0 ? (
-        <div className="adm-empty">
-          <p>⭐ No reviews yet.</p>
-          <p>Reviews appear here once customers submit feedback.</p>
-        </div>
+        <div className="adm-empty"><p>⭐ No reviews yet.</p><p>Reviews appear here once customers submit feedback.</p></div>
       ) : (
         <div className="adm-fb-grid">
           {feedbacks.map(order => {
             const { feedback, customer, items } = order;
-            const initials = `${customer.firstName?.[0] || ""}${customer.lastName?.[0] || ""}`.toUpperCase();
-            const productName = items?.[0]?.name || "Product";
-
+            const initials = `${customer.firstName?.[0]||""}${customer.lastName?.[0]||""}`.toUpperCase();
             return (
               <div className="adm-fb-card" key={order._id}>
-                {/* Top accent bar */}
                 <div className="adm-fb-card-accent" />
-
                 <div className="adm-fb-card-header">
                   <div className="adm-fb-avatar">{initials}</div>
                   <div className="adm-fb-meta">
-                    <strong className="adm-fb-name">
-                      {customer.firstName} {customer.lastName}
-                    </strong>
-                    <span className="adm-fb-date">
-                      {feedback.givenAt
-                        ? new Date(feedback.givenAt).toLocaleDateString("en-IN", {
-                            day: "numeric", month: "short", year: "numeric",
-                          })
-                        : "—"}
-                    </span>
+                    <strong className="adm-fb-name">{customer.firstName} {customer.lastName}</strong>
+                    <span className="adm-fb-date">{feedback.givenAt ? new Date(feedback.givenAt).toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }) : "—"}</span>
                   </div>
-                  <div className="adm-fb-card-stars">
-                    {[1,2,3,4,5].map(s => (
-                      <span key={s} className={s <= feedback.rating ? "adm-star filled" : "adm-star"}>★</span>
-                    ))}
-                  </div>
+                  <div className="adm-fb-card-stars">{[1,2,3,4,5].map(s => <span key={s} className={s <= feedback.rating ? "adm-star filled" : "adm-star"}>★</span>)}</div>
                 </div>
-
-                {feedback.comment && (
-                  <div className="adm-fb-comment">
-                    <p>"{feedback.comment}"</p>
-                  </div>
-                )}
-
+                {feedback.comment && <div className="adm-fb-comment"><p>"{feedback.comment}"</p></div>}
                 <div className="adm-fb-footer">
-                  <span className="adm-fb-product-tag">{productName}</span>
+                  <span className="adm-fb-product-tag">{items?.[0]?.name || "Product"}</span>
                   <span className="adm-fb-city">📍 {customer.city || "—"}</span>
-                  <button
-                    className="adm-fb-delete-btn"
-                    onClick={() => setDeleteConfirm(order._id)}
-                    title="Delete this review"
-                  >
-                    🗑️ Delete
-                  </button>
+                  <button className="adm-fb-delete-btn" onClick={() => setDeleteConfirm(order._id)}>🗑️ Delete</button>
                 </div>
               </div>
             );
           })}
         </div>
       )}
-
-      {/* Delete confirm modal */}
       {deleteConfirm && (
-        <div className="adm-modal-overlay">
-          <div className="adm-modal">
-            <h3>Delete Review?</h3>
-            <p>This will remove the review from the public feedback page immediately.</p>
-            <div className="adm-modal-actions">
-              <button className="adm-btn-delete" onClick={() => handleDelete(deleteConfirm)}>
-                Yes, Delete
-              </button>
-              <button className="adm-btn-cancel" onClick={() => setDeleteConfirm(null)}>
-                Cancel
-              </button>
-            </div>
+        <div className="adm-modal-overlay"><div className="adm-modal">
+          <h3>Delete Review?</h3><p>This will remove the review from the public feedback page immediately.</p>
+          <div className="adm-modal-actions">
+            <button className="adm-btn-delete" onClick={() => handleDelete(deleteConfirm)}>Yes, Delete</button>
+            <button className="adm-btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
           </div>
-        </div>
+        </div></div>
       )}
     </div>
   );
@@ -481,171 +315,72 @@ const FeedbackTab = ({ token }) => {
 
 // ── USERS TAB ────────────────────────────────────────────────────────────────
 const UsersTab = ({ token }) => {
-  const [users, setUsers]         = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [message, setMessage]     = useState("");
-  const [search, setSearch]       = useState("");
+  const [users, setUsers]     = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  const [search, setSearch]   = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/admin/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res  = await fetch("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
-    } catch {
-      setMessage("Failed to load users.");
-    }
+    } catch { setMessage("Failed to load users."); }
     setLoading(false);
   };
 
-  useEffect(() => { const init = async () => { await loadUsers(); }; init(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { loadUsers(); }, []); // eslint-disable-line
 
   const handleDelete = async (userId) => {
     try {
-      const res  = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
-        method:  "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res  = await fetch(`http://localhost:5000/api/admin/users/${userId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
-      if (res.ok) {
-        setMessage(data.message);
-        setDeleteConfirm(null);
-        setUsers(prev => prev.filter(u => u._id !== userId));
-      } else {
-        setMessage(data.message || "Delete failed.");
-      }
-    } catch {
-      setMessage("Server error.");
-    }
+      if (res.ok) { setMessage(data.message); setDeleteConfirm(null); setUsers(prev => prev.filter(u => u._id !== userId)); }
+      else setMessage(data.message || "Delete failed.");
+    } catch { setMessage("Server error."); }
   };
 
   const filtered = users.filter(u => {
     const q = search.toLowerCase();
-    return (
-      `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      (u.city || "").toLowerCase().includes(q) ||
-      (u.phone || "").includes(q)
-    );
+    return `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || (u.city||"").toLowerCase().includes(q) || (u.phone||"").includes(q);
   });
-
   const totalRevenue = users.reduce((s, u) => s + (u.totalSpent || 0), 0);
 
   if (loading) return <div className="adm-loading">Loading users…</div>;
 
   return (
     <div className="adm-users-wrap">
-      {message && (
-        <div className="adm-message" onClick={() => setMessage("")}>{message} ✕</div>
-      )}
-
-      {/* ── Summary strip ── */}
+      {message && <div className="adm-message" onClick={() => setMessage("")}>{message} ✕</div>}
       <div className="adm-users-summary">
-        <div className="adm-orders-stat">
-          <span className="adm-orders-stat-num">{users.length}</span>
-          <span className="adm-orders-stat-label">Total Users</span>
-        </div>
-        <div className="adm-orders-stat">
-          <span className="adm-orders-stat-num" style={{ color: "#27ae60" }}>
-            {users.filter(u => u.orderCount > 0).length}
-          </span>
-          <span className="adm-orders-stat-label">Have Orders</span>
-        </div>
-        <div className="adm-orders-stat">
-          <span className="adm-orders-stat-num" style={{ color: "#c8963a" }}>
-            ₹{totalRevenue.toLocaleString()}
-          </span>
-          <span className="adm-orders-stat-label">Total Revenue</span>
-        </div>
-        <div className="adm-orders-stat">
-          <span className="adm-orders-stat-num" style={{ color: "#8e44ad" }}>
-            {users.filter(u => u.orderCount === 0).length}
-          </span>
-          <span className="adm-orders-stat-label">No Orders Yet</span>
-        </div>
+        {[["Total Users", users.length, ""], ["Have Orders", users.filter(u=>u.orderCount>0).length, "#27ae60"], [`₹${totalRevenue.toLocaleString()}`, "Total Revenue", "#c8963a"], ["No Orders Yet", users.filter(u=>u.orderCount===0).length, "#8e44ad"]].map(([num, label, color], i) => (
+          <div key={i} className="adm-orders-stat">
+            <span className="adm-orders-stat-num" style={color?{color}:{}}>{num}</span>
+            <span className="adm-orders-stat-label">{label}</span>
+          </div>
+        ))}
       </div>
-
-      {/* ── Search ── */}
       <div className="adm-users-search-row">
-        <input
-          className="adm-users-search"
-          placeholder="🔍 Search by name, email, city or phone…"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        {search && (
-          <button className="adm-users-search-clear" onClick={() => setSearch("")}>✕</button>
-        )}
+        <input className="adm-users-search" placeholder="🔍 Search by name, email, city or phone…" value={search} onChange={e => setSearch(e.target.value)} />
+        {search && <button className="adm-users-search-clear" onClick={() => setSearch("")}>✕</button>}
       </div>
-
-      {filtered.length === 0 ? (
-        <div className="adm-empty">
-          <p>No users found{search ? ` for "${search}"` : ""}.</p>
-        </div>
-      ) : (
+      {filtered.length === 0 ? <div className="adm-empty"><p>No users found{search ? ` for "${search}"` : ""}.</p></div> : (
         <div className="adm-table-card">
           <table className="adm-table">
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Contact</th>
-                <th>Location</th>
-                <th>Orders</th>
-                <th>Spent</th>
-                <th>Joined</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Customer</th><th>Contact</th><th>Location</th><th>Orders</th><th>Spent</th><th>Joined</th><th>Actions</th></tr></thead>
             <tbody>
               {filtered.map(u => {
-                const initials = `${u.firstName?.[0] || ""}${u.lastName?.[0] || ""}`.toUpperCase();
+                const initials = `${u.firstName?.[0]||""}${u.lastName?.[0]||""}`.toUpperCase();
                 return (
                   <tr key={u._id}>
-                    <td>
-                      <div className="adm-user-cell">
-                        <div className="adm-user-avatar">{initials}</div>
-                        <div>
-                          <div className="adm-product-name">{u.firstName} {u.lastName}</div>
-                          <div className="adm-product-desc">{u.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="adm-product-name">{u.phone}</div>
-                      {u.whatsapp && u.whatsapp !== u.phone && (
-                        <div className="adm-product-desc">💬 {u.whatsapp}</div>
-                      )}
-                    </td>
-                    <td>
-                      <div className="adm-product-name">{u.city || "—"}</div>
-                      {u.pincode && <div className="adm-product-desc">{u.pincode}</div>}
-                    </td>
-                    <td>
-                      <span className={`adm-user-order-count ${u.orderCount > 0 ? "has-orders" : ""}`}>
-                        {u.orderCount}
-                      </span>
-                    </td>
-                    <td className="adm-price">
-                      {u.totalSpent > 0 ? `₹${u.totalSpent.toLocaleString()}` : "—"}
-                    </td>
-                    <td>
-                      <div className="adm-product-desc">
-                        {new Date(u.createdAt).toLocaleDateString("en-IN", {
-                          day: "numeric", month: "short", year: "numeric",
-                        })}
-                      </div>
-                    </td>
-                    <td>
-                      <button
-                        className="adm-btn-delete"
-                        onClick={() => setDeleteConfirm(u._id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
+                    <td><div className="adm-user-cell"><div className="adm-user-avatar">{initials}</div><div><div className="adm-product-name">{u.firstName} {u.lastName}</div><div className="adm-product-desc">{u.email}</div></div></div></td>
+                    <td><div className="adm-product-name">{u.phone}</div>{u.whatsapp && u.whatsapp !== u.phone && <div className="adm-product-desc">💬 {u.whatsapp}</div>}</td>
+                    <td><div className="adm-product-name">{u.city||"—"}</div>{u.pincode && <div className="adm-product-desc">{u.pincode}</div>}</td>
+                    <td><span className={`adm-user-order-count ${u.orderCount>0?"has-orders":""}`}>{u.orderCount}</span></td>
+                    <td className="adm-price">{u.totalSpent>0 ? `₹${u.totalSpent.toLocaleString()}` : "—"}</td>
+                    <td><div className="adm-product-desc">{new Date(u.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</div></td>
+                    <td><button className="adm-btn-delete" onClick={() => setDeleteConfirm(u._id)}>Delete</button></td>
                   </tr>
                 );
               })}
@@ -653,31 +388,84 @@ const UsersTab = ({ token }) => {
           </table>
         </div>
       )}
-
-      {/* Delete confirm modal */}
       {deleteConfirm && (
-        <div className="adm-modal-overlay">
-          <div className="adm-modal">
-            <h3>Delete User?</h3>
-            <p>
-              This will permanently remove{" "}
-              <strong>
-                {users.find(u => u._id === deleteConfirm)?.firstName}{" "}
-                {users.find(u => u._id === deleteConfirm)?.lastName}
-              </strong>
-              's account. Their past orders will remain in the system.
-            </p>
-            <div className="adm-modal-actions">
-              <button className="adm-btn-delete" onClick={() => handleDelete(deleteConfirm)}>
-                Yes, Delete
-              </button>
-              <button className="adm-btn-cancel" onClick={() => setDeleteConfirm(null)}>
-                Cancel
-              </button>
-            </div>
+        <div className="adm-modal-overlay"><div className="adm-modal">
+          <h3>Delete User?</h3>
+          <p>This will permanently remove <strong>{users.find(u=>u._id===deleteConfirm)?.firstName} {users.find(u=>u._id===deleteConfirm)?.lastName}</strong>'s account.</p>
+          <div className="adm-modal-actions">
+            <button className="adm-btn-delete" onClick={() => handleDelete(deleteConfirm)}>Yes, Delete</button>
+            <button className="adm-btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
           </div>
-        </div>
+        </div></div>
       )}
+    </div>
+  );
+};
+
+// ── CANDLE SIZE PRICING TABLE (inside form) ──────────────────────────────────
+const CandleSizeTable = ({ sizeOptions, onChange }) => {
+  const handlePrice = (size, price) => {
+    const existing = sizeOptions.find(s => s.size === size);
+    if (existing) {
+      onChange(sizeOptions.map(s => s.size === size ? { ...s, price } : s));
+    } else {
+      onChange([...sizeOptions, { size, price }]);
+    }
+  };
+
+  const handleToggle = (size) => {
+    const exists = sizeOptions.find(s => s.size === size);
+    if (exists) {
+      onChange(sizeOptions.filter(s => s.size !== size));
+    } else {
+      onChange([...sizeOptions, { size, price: "" }]);
+    }
+  };
+
+  return (
+    <div className="adm-form-field">
+      <label>Size Options &amp; Prices</label>
+      <div className="adm-candle-size-table">
+        <div className="adm-size-table-header">
+        <span>Size</span>
+        <span>Dia × Height / Burn</span>
+        <span>Price (₹)</span>
+        </div>
+        {CANDLE_SIZES.map(size => {
+          const entry     = sizeOptions.find(s => s.size === size);
+          const isChecked = !!entry;
+          const burnMap  = { small: "2–3 hrs",  medium: "3–4 hrs",  large: "4–5 hrs"  };
+          const diaMap   = { small: '2.5"',     medium: '3.0"',     large: '3.0"'     };
+          const htMap    = { small: '2.5"',     medium: '3.0"',     large: '4.0"'     };
+          return (
+            <div key={size} className={`adm-size-table-row ${isChecked ? "active" : ""}`}>
+              <div className="adm-size-check-label">
+                <input type="checkbox" id={`sz-${size}`} checked={isChecked} onChange={() => handleToggle(size)} />
+                <label htmlFor={`sz-${size}`}>
+                  <span className="adm-size-emoji">{sizeEmoji[size]}</span>
+                  <strong>{sizeLabel[size]}</strong>
+                </label>
+              </div>
+              <span className="adm-size-burn">
+              ⌀{diaMap[size]} ↕{htMap[size]}<br/>🕯 {burnMap[size]}
+              </span>
+              {isChecked ? (
+                <input
+                  type="number"
+                  className="adm-weight-price-input"
+                  placeholder="₹ Price"
+                  value={entry.price}
+                  min="0"
+                  onChange={e => handlePrice(size, e.target.value)}
+                />
+              ) : (
+                <span className="adm-size-disabled">—</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <p className="adm-weight-hint">✓ Check a size and enter its price. Smallest checked price becomes the base price.</p>
     </div>
   );
 };
@@ -700,17 +488,17 @@ const AdminDashboard = () => {
 
   const emptyForm = {
     name: "", description: "", price: "",
-    category: "", stock: "", isAvailable: true,
+    category: "", candleCategory: "", fragrance: "",
+    stock: "", isAvailable: true,
     weightOptions: [],
+    sizeOptions: [],
     existingImages: [],
     imageFiles: [],
     allPreviews: [],
   };
   const [form, setForm] = useState(emptyForm);
 
-  useEffect(() => {
-    if (!token) navigate("/admin/login");
-  }, [token, navigate]);
+  useEffect(() => { if (!token) navigate("/admin/login"); }, [token, navigate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -720,9 +508,7 @@ const AdminDashboard = () => {
         const res  = await fetch("http://localhost:5000/api/admin/products");
         const data = await res.json();
         if (!cancelled) setProducts(data);
-      } catch {
-        if (!cancelled) setMessage("Failed to load products.");
-      }
+      } catch { if (!cancelled) setMessage("Failed to load products."); }
       if (!cancelled) setLoading(false);
     };
     load();
@@ -735,17 +521,11 @@ const AdminDashboard = () => {
       const res  = await fetch("http://localhost:5000/api/admin/products");
       const data = await res.json();
       setProducts(data);
-    } catch {
-      setMessage("Failed to load products.");
-    }
+    } catch { setMessage("Failed to load products."); }
     setLoading(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("adminUser");
-    navigate("/admin/login");
-  };
+  const handleLogout = () => { localStorage.removeItem("adminToken"); localStorage.removeItem("adminUser"); navigate("/admin/login"); };
 
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -753,20 +533,12 @@ const AdminDashboard = () => {
   };
 
   const handleImageAdd = (e) => {
-    const incoming     = Array.from(e.target.files);
+    const incoming    = Array.from(e.target.files);
     const totalAllowed = 5 - form.allPreviews.length;
     if (totalAllowed <= 0) { setMessage("Maximum 5 images allowed."); return; }
     const toAdd       = incoming.slice(0, totalAllowed);
-    const newPreviews = toAdd.map((f, i) => ({
-      type: "new",
-      src:  URL.createObjectURL(f),
-      fileIndex: form.imageFiles.length + i,
-    }));
-    setForm(prev => ({
-      ...prev,
-      imageFiles:  [...prev.imageFiles, ...toAdd],
-      allPreviews: [...prev.allPreviews, ...newPreviews],
-    }));
+    const newPreviews = toAdd.map((f, i) => ({ type: "new", src: URL.createObjectURL(f), fileIndex: form.imageFiles.length + i }));
+    setForm(prev => ({ ...prev, imageFiles: [...prev.imageFiles, ...toAdd], allPreviews: [...prev.allPreviews, ...newPreviews] }));
     e.target.value = "";
   };
 
@@ -775,15 +547,11 @@ const AdminDashboard = () => {
       const removed        = prev.allPreviews[idx];
       const newAllPreviews = prev.allPreviews.filter((_, i) => i !== idx);
       if (removed.type === "existing") {
-        const newExisting = prev.existingImages.filter(p => p !== removed.serverPath);
-        return { ...prev, allPreviews: newAllPreviews, existingImages: newExisting };
+        return { ...prev, allPreviews: newAllPreviews, existingImages: prev.existingImages.filter(p => p !== removed.serverPath) };
       } else {
         const newFiles  = prev.imageFiles.filter((_, fi) => fi !== removed.fileIndex);
-        let newFileCounter = 0;
-        const reIndexed = newAllPreviews.map(p => {
-          if (p.type === "new") return { ...p, fileIndex: newFileCounter++ };
-          return p;
-        });
+        let   counter   = 0;
+        const reIndexed = newAllPreviews.map(p => p.type === "new" ? { ...p, fileIndex: counter++ } : p);
         return { ...prev, allPreviews: reIndexed, imageFiles: newFiles };
       }
     });
@@ -802,32 +570,46 @@ const AdminDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
+    // Validation
     if (form.category === "Tea") {
       if (form.weightOptions.length === 0) { setMessage("Please add at least one weight option for Tea."); return; }
       if (form.weightOptions.some(w => !w.price || w.price === "")) { setMessage("Please enter a price for every selected weight option."); return; }
+    }
+    if (form.category === "Candles") {
+      if (form.sizeOptions.length === 0) { setMessage("Please add at least one size option for Candles."); return; }
+      if (form.sizeOptions.some(s => !s.price || s.price === "")) { setMessage("Please enter a price for every selected size."); return; }
+      if (!form.candleCategory) { setMessage("Please select a candle category (Plain, Design, etc)."); return; }
     }
     if (form.allPreviews.length === 0) { setMessage("Please upload at least one image."); return; }
 
     const formData = new FormData();
     formData.append("name",        form.name);
     formData.append("description", form.description);
-    const basePrice = form.category === "Tea"
-      ? Math.min(...form.weightOptions.map(w => Number(w.price)))
-      : form.price;
-    formData.append("price",        basePrice);
-    formData.append("category",     form.category);
-    formData.append("stock",        form.stock);
-    formData.append("isAvailable",  form.isAvailable);
-    if (form.category === "Tea")
+    formData.append("category",    form.category);
+    formData.append("stock",       form.stock);
+    formData.append("isAvailable", form.isAvailable);
+
+    if (form.category === "Tea") {
+      const basePrice = Math.min(...form.weightOptions.map(w => Number(w.price)));
+      formData.append("price",         basePrice);
       formData.append("weightOptions", JSON.stringify(form.weightOptions));
+    } else if (form.category === "Candles") {
+      const basePrice = Math.min(...form.sizeOptions.map(s => Number(s.price)));
+      formData.append("price",          basePrice);
+      formData.append("sizeOptions",    JSON.stringify(form.sizeOptions));
+      formData.append("candleCategory", form.candleCategory);
+      formData.append("fragrance",      form.fragrance || "");
+    } else {
+      formData.append("price", form.price);
+    }
+
     const keptInOrder = form.allPreviews.filter(p => p.type === "existing").map(p => p.serverPath);
     formData.append("keptImages", JSON.stringify(keptInOrder));
-    const newPreviewsInOrder = form.allPreviews.filter(p => p.type === "new");
-    newPreviewsInOrder.forEach(p => formData.append("images", form.imageFiles[p.fileIndex]));
+    const newPreviews = form.allPreviews.filter(p => p.type === "new");
+    newPreviews.forEach(p => formData.append("images", form.imageFiles[p.fileIndex]));
 
-    const url    = editProduct
-      ? `http://localhost:5000/api/admin/products/${editProduct._id}`
-      : "http://localhost:5000/api/admin/products";
+    const url    = editProduct ? `http://localhost:5000/api/admin/products/${editProduct._id}` : "http://localhost:5000/api/admin/products";
     const method = editProduct ? "PUT" : "POST";
 
     try {
@@ -840,26 +622,23 @@ const AdminDashboard = () => {
         const data = await res.json();
         setMessage(data.message || "Something went wrong.");
       }
-    } catch {
-      setMessage("Server error.");
-    }
+    } catch { setMessage("Server error."); }
   };
 
   const handleEdit = (product) => {
     setEditProduct(product);
-    const existingPreviews = (product.images || []).map(serverPath => ({
-      type: "existing", src: `http://localhost:5000${serverPath}`, serverPath,
-    }));
+    const existingPreviews = (product.images || []).map(serverPath => ({ type: "existing", src: `http://localhost:5000${serverPath}`, serverPath }));
     setForm({
-      name:        product.name,
-      description: product.description,
-      price:       product.price,
-      category:    product.category,
-      stock:       product.stock,
-      isAvailable: product.isAvailable,
-      weightOptions: (product.weightOptions || []).map(w =>
-        typeof w === "object" ? w : { weight: w, price: product.price }
-      ),
+      name:           product.name,
+      description:    product.description,
+      price:          product.price,
+      category:       product.category,
+      candleCategory: product.candleCategory || "",
+      fragrance:      product.fragrance || "",
+      stock:          product.stock,
+      isAvailable:    product.isAvailable,
+      weightOptions:  (product.weightOptions || []).map(w => typeof w === "object" ? w : { weight: w, price: product.price }),
+      sizeOptions:    product.sizeOptions || [],
       existingImages: product.images || [],
       imageFiles:     [],
       allPreviews:    existingPreviews,
@@ -870,56 +649,40 @@ const AdminDashboard = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/products/${id}`, {
-        method: "DELETE", headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`http://localhost:5000/api/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) { setMessage("Product deleted."); setDeleteConfirm(null); fetchProducts(); }
-    } catch {
-      setMessage("Failed to delete.");
-    }
+    } catch { setMessage("Failed to delete."); }
   };
 
   const TABS = [
-    { key: "products",  label: "🕯️ Products" },
-    { key: "orders",    label: "📦 Orders" },
-    { key: "feedback",  label: "⭐ Feedback" },
-    { key: "users",     label: "👥 Users" },
+    { key: "products", label: "🕯️ Products" },
+    { key: "orders",   label: "📦 Orders" },
+    { key: "feedback", label: "⭐ Feedback" },
+    { key: "users",    label: "👥 Users" },
   ];
 
   return (
     <div className="adm-wrap">
-
       {newOrderAlert && <NewOrderToast onDismiss={dismissAlert} />}
 
       {/* ── SIDEBAR ── */}
       <div className="adm-sidebar">
         <div className="adm-brand">
-          <div className="adm-flame" />
-          <div className="adm-candle" />
-          <h1>Shree Chemicals</h1>
-          <p>Admin Portal</p>
+          <div className="adm-flame" /><div className="adm-candle" />
+          <h1>Shree Chemicals</h1><p>Admin Portal</p>
         </div>
         <nav className="adm-nav">
           {TABS.map(({ key, label }) => (
-            <div
-              key={key}
-              className={`adm-nav-item ${activeTab === key ? "active" : ""}`}
-              onClick={() => setActiveTab(key)}
-            >
+            <div key={key} className={`adm-nav-item ${activeTab === key ? "active" : ""}`} onClick={() => setActiveTab(key)}>
               <span>{label}</span>
-              {key === "orders" && pendingCount > 0 && (
-                <span className="adm-nav-badge">{pendingCount}</span>
-              )}
+              {key === "orders" && pendingCount > 0 && <span className="adm-nav-badge">{pendingCount}</span>}
             </div>
           ))}
         </nav>
         <div className="adm-sidebar-footer">
           <div className="adm-admin-info">
             <div className="adm-avatar">{admin.name?.charAt(0) || "A"}</div>
-            <div>
-              <div className="adm-admin-name">{admin.name || "Admin"}</div>
-              <div className="adm-admin-email">{admin.email || ""}</div>
-            </div>
+            <div><div className="adm-admin-name">{admin.name || "Admin"}</div><div className="adm-admin-email">{admin.email || ""}</div></div>
           </div>
           <button className="adm-logout" onClick={handleLogout}>🚪 Logout</button>
         </div>
@@ -931,42 +694,32 @@ const AdminDashboard = () => {
           <div>
             <h2>
               {activeTab === "products" && "Product Management"}
-              {activeTab === "orders" && (
-                <span>
-                  Orders
-                  {pendingCount > 0 && (
-                    <span className="adm-topbar-badge">{pendingCount} pending</span>
-                  )}
-                </span>
-              )}
+              {activeTab === "orders" && <span>Orders{pendingCount > 0 && <span className="adm-topbar-badge">{pendingCount} pending</span>}</span>}
               {activeTab === "feedback" && "Customer Reviews"}
-              {activeTab === "users"    && "User Management"}
+              {activeTab === "users" && "User Management"}
             </h2>
             <p>{products.length} products in store</p>
           </div>
           {activeTab === "products" && (
-            <button
-              className="adm-btn-add"
-              onClick={() => { setShowForm(!showForm); setEditProduct(null); setForm(emptyForm); }}
-            >
+            <button className="adm-btn-add" onClick={() => { setShowForm(!showForm); setEditProduct(null); setForm(emptyForm); }}>
               {showForm ? "✕ Cancel" : "+ Add Product"}
             </button>
           )}
         </div>
 
-        {message && (
-          <div className="adm-message" onClick={() => setMessage("")}>{message} ✕</div>
-        )}
+        {message && <div className="adm-message" onClick={() => setMessage("")}>{message} ✕</div>}
 
-        {/* ── Product form ── */}
+        {/* ── PRODUCT FORM ── */}
         {showForm && activeTab === "products" && (
           <div className="adm-form-card">
             <h3>{editProduct ? "Edit Product" : "Add New Product"}</h3>
             <form onSubmit={handleSubmit} className="adm-form">
+
+              {/* Name + Category */}
               <div className="adm-form-row">
                 <div className="adm-form-field">
                   <label>Product Name</label>
-                  <input name="name" value={form.name} onChange={handleFormChange} placeholder="e.g. Green Tea" required />
+                  <input name="name" value={form.name} onChange={handleFormChange} placeholder="e.g. Red Rose Candle" required />
                 </div>
                 <div className="adm-form-field">
                   <label>Category</label>
@@ -976,17 +729,94 @@ const AdminDashboard = () => {
                   </select>
                 </div>
               </div>
+
+              {/* Description */}
               <div className="adm-form-field">
                 <label>Description</label>
-                <textarea name="description" value={form.description} onChange={handleFormChange}
-                  placeholder="Describe the product…" rows={3} required />
+                <textarea name="description" value={form.description} onChange={handleFormChange} placeholder="Describe the product…" rows={3} required />
               </div>
-              {form.category !== "Tea" && (
+
+              {/* ── CANDLE-SPECIFIC FIELDS ── */}
+              {form.category === "Candles" && (
+                <>
+                  <div className="adm-form-row">
+                    <div className="adm-form-field">
+                      <label>Candle Type</label>
+                      <select name="candleCategory" value={form.candleCategory} onChange={handleFormChange} required>
+                        <option value="">Select type</option>
+                        {CANDLE_CATS.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div className="adm-form-field">
+                      <label>
+                        Fragrance
+                        <span className="adm-field-hint"> (leave blank if no aroma)</span>
+                      </label>
+                      <input
+                        name="fragrance"
+                        value={form.fragrance}
+                        onChange={handleFormChange}
+                        placeholder="e.g. Rose, Lavender, Jasmine"
+                        disabled={form.candleCategory === "Plain" || form.candleCategory === "Design"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="adm-form-row">
+                    <div className="adm-form-field">
+                      <label>Stock</label>
+                      <input name="stock" type="number" value={form.stock} onChange={handleFormChange} placeholder="50" required />
+                    </div>
+                  </div>
+
+                  {/* Size × Price table */}
+                  <CandleSizeTable
+                    sizeOptions={form.sizeOptions}
+                    onChange={sizeOptions => setForm(prev => ({ ...prev, sizeOptions }))}
+                  />
+                </>
+              )}
+
+              {/* ── TEA-SPECIFIC FIELDS ── */}
+              {form.category === "Tea" && (
+                <>
+                  <div className="adm-form-field">
+                    <label>Stock</label>
+                    <input name="stock" type="number" value={form.stock} onChange={handleFormChange} placeholder="50" required />
+                  </div>
+                  <div className="adm-form-field">
+                    <label>Weight Options &amp; Prices</label>
+                    <div className="adm-weight-price-list">
+                      {WEIGHT_OPTS.map(w => {
+                        const entry     = form.weightOptions.find(x => x.weight === w);
+                        const isChecked = !!entry;
+                        return (
+                          <div key={w} className="adm-weight-price-row">
+                            <input type="checkbox" id={`w-${w}`} checked={isChecked}
+                              onChange={() => {
+                                if (isChecked) setForm(prev => ({ ...prev, weightOptions: prev.weightOptions.filter(x => x.weight !== w) }));
+                                else setForm(prev => ({ ...prev, weightOptions: [...prev.weightOptions, { weight: w, price: "" }] }));
+                              }} />
+                            <label htmlFor={`w-${w}`} className="adm-weight-chip-label">{w}</label>
+                            {isChecked && (
+                              <input type="number" className="adm-weight-price-input" placeholder="₹ Price" value={entry.price} min="0"
+                                onChange={e => setForm(prev => ({ ...prev, weightOptions: prev.weightOptions.map(x => x.weight === w ? { ...x, price: e.target.value } : x) }))} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="adm-weight-hint">✓ Check a weight and set its price</p>
+                  </div>
+                </>
+              )}
+
+              {/* ── INCENSE / other: single price ── */}
+              {form.category !== "Tea" && form.category !== "Candles" && (
                 <div className="adm-form-row">
                   <div className="adm-form-field">
                     <label>Price (₹)</label>
-                    <input name="price" type="number" value={form.price} onChange={handleFormChange}
-                      placeholder="299" required={form.category !== "Tea"} />
+                    <input name="price" type="number" value={form.price} onChange={handleFormChange} placeholder="299" required />
                   </div>
                   <div className="adm-form-field">
                     <label>Stock</label>
@@ -994,53 +824,12 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               )}
-              {form.category === "Tea" && (
-                <div className="adm-form-field">
-                  <label>Stock</label>
-                  <input name="stock" type="number" value={form.stock} onChange={handleFormChange} placeholder="50" required />
-                </div>
-              )}
-              {form.category === "Tea" && (
-                <div className="adm-form-field">
-                  <label>Weight Options &amp; Prices</label>
-                  <div className="adm-weight-price-list">
-                    {WEIGHT_OPTS.map(w => {
-                      const entry     = form.weightOptions.find(x => x.weight === w);
-                      const isChecked = !!entry;
-                      return (
-                        <div key={w} className="adm-weight-price-row">
-                          <input type="checkbox" id={`w-${w}`} checked={isChecked}
-                            onChange={() => {
-                              if (isChecked) {
-                                setForm(prev => ({ ...prev, weightOptions: prev.weightOptions.filter(x => x.weight !== w) }));
-                              } else {
-                                setForm(prev => ({ ...prev, weightOptions: [...prev.weightOptions, { weight: w, price: "" }] }));
-                              }
-                            }} />
-                          <label htmlFor={`w-${w}`} className="adm-weight-chip-label">{w}</label>
-                          {isChecked && (
-                            <input type="number" className="adm-weight-price-input"
-                              placeholder="₹ Price" value={entry.price} min="0"
-                              onChange={e => setForm(prev => ({
-                                ...prev,
-                                weightOptions: prev.weightOptions.map(x =>
-                                  x.weight === w ? { ...x, price: e.target.value } : x
-                                ),
-                              }))} />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className="adm-weight-hint">✓ Check a weight and set its price</p>
-                </div>
-              )}
+
+              {/* Images */}
               <div className="adm-form-field">
                 <label>
                   Product Images ({form.allPreviews.length}/5)
-                  {form.allPreviews.length > 0 && (
-                    <span className="adm-img-hint"> — drag arrows to reorder, ✕ to remove</span>
-                  )}
+                  {form.allPreviews.length > 0 && <span className="adm-img-hint"> — drag arrows to reorder, ✕ to remove</span>}
                 </label>
                 {form.allPreviews.length > 0 && (
                   <div className="adm-img-preview-row">
@@ -1060,46 +849,33 @@ const AdminDashboard = () => {
                 {form.allPreviews.length < 5 && (
                   <div className="adm-upload-area" onClick={() => document.getElementById("img-upload").click()}>
                     <input id="img-upload" type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleImageAdd} />
-                    <div className="adm-upload-placeholder">
-                      📷 Click to add images ({5 - form.allPreviews.length} remaining)
-                    </div>
+                    <div className="adm-upload-placeholder">📷 Click to add images ({5 - form.allPreviews.length} remaining)</div>
                   </div>
                 )}
               </div>
+
               <div className="adm-form-check">
                 <input type="checkbox" name="isAvailable" checked={form.isAvailable} onChange={handleFormChange} id="avail" />
                 <label htmlFor="avail">Available for sale</label>
               </div>
+
               <div className="adm-form-actions">
-                <button type="submit" className="adm-btn-save">
-                  {editProduct ? "Update Product" : "Add Product"} →
-                </button>
-                <button type="button" className="adm-btn-cancel"
-                  onClick={() => { setShowForm(false); setEditProduct(null); setForm(emptyForm); }}>
-                  Cancel
-                </button>
+                <button type="submit" className="adm-btn-save">{editProduct ? "Update Product" : "Add Product"} →</button>
+                <button type="button" className="adm-btn-cancel" onClick={() => { setShowForm(false); setEditProduct(null); setForm(emptyForm); }}>Cancel</button>
               </div>
             </form>
           </div>
         )}
 
-        {/* ── Tab content ── */}
+        {/* ── PRODUCTS TABLE ── */}
         {activeTab === "products" && (
           <div className="adm-table-card">
-            {loading ? (
-              <div className="adm-loading">Loading products…</div>
-            ) : products.length === 0 ? (
-              <div className="adm-empty">
-                <p>No products yet.</p>
-                <p>Click "+ Add Product" to get started!</p>
-              </div>
+            {loading ? <div className="adm-loading">Loading products…</div> : products.length === 0 ? (
+              <div className="adm-empty"><p>No products yet.</p><p>Click "+ Add Product" to get started!</p></div>
             ) : (
               <table className="adm-table">
                 <thead>
-                  <tr>
-                    <th>Image</th><th>Name</th><th>Category</th>
-                    <th>Price</th><th>Stock</th><th>Status</th><th>Actions</th>
-                  </tr>
+                  <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                   {products.map(p => (
@@ -1112,6 +888,7 @@ const AdminDashboard = () => {
                       <td>
                         <div className="adm-product-name">{p.name}</div>
                         <div className="adm-product-desc">{p.description?.slice(0, 50)}…</div>
+                        {/* Tea weight tags */}
                         {p.weightOptions?.length > 0 && (
                           <div className="adm-weight-tags">
                             {p.weightOptions.map(w => (
@@ -1121,15 +898,22 @@ const AdminDashboard = () => {
                             ))}
                           </div>
                         )}
+                        {/* Candle size tags */}
+                        {p.sizeOptions?.length > 0 && (
+                          <div className="adm-weight-tags">
+                            {p.sizeOptions.map(s => (
+                              <span key={s.size} className="adm-weight-tag adm-size-tag">
+                                {sizeLabel[s.size]} · ₹{s.price}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {p.candleCategory && <span className="adm-badge" style={{marginTop:"4px"}}>{p.candleCategory}{p.fragrance ? ` · ${p.fragrance}` : ""}</span>}
                       </td>
                       <td><span className="adm-badge">{categoryIcon[p.category]} {p.category}</span></td>
-                      <td className="adm-price">₹{p.price}</td>
+                      <td className="adm-price">from ₹{p.price}</td>
                       <td>{p.stock}</td>
-                      <td>
-                        <span className={`adm-status ${p.isAvailable ? "available" : "unavailable"}`}>
-                          {p.isAvailable ? "Available" : "Hidden"}
-                        </span>
-                      </td>
+                      <td><span className={`adm-status ${p.isAvailable ? "available" : "unavailable"}`}>{p.isAvailable ? "Available" : "Hidden"}</span></td>
                       <td>
                         <div className="adm-actions">
                           <button className="adm-btn-edit" onClick={() => handleEdit(p)}>Edit</button>
@@ -1149,18 +933,15 @@ const AdminDashboard = () => {
         {activeTab === "users"    && <UsersTab    token={token} />}
       </div>
 
-      {/* ── Delete product modal ── */}
+      {/* Delete product modal */}
       {deleteConfirm && (
-        <div className="adm-modal-overlay">
-          <div className="adm-modal">
-            <h3>Delete Product?</h3>
-            <p>This action cannot be undone.</p>
-            <div className="adm-modal-actions">
-              <button className="adm-btn-delete" onClick={() => handleDelete(deleteConfirm)}>Yes, Delete</button>
-              <button className="adm-btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
-            </div>
+        <div className="adm-modal-overlay"><div className="adm-modal">
+          <h3>Delete Product?</h3><p>This action cannot be undone.</p>
+          <div className="adm-modal-actions">
+            <button className="adm-btn-delete" onClick={() => handleDelete(deleteConfirm)}>Yes, Delete</button>
+            <button className="adm-btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
           </div>
-        </div>
+        </div></div>
       )}
     </div>
   );

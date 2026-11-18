@@ -11,10 +11,26 @@ const addProduct = async (req, res) => {
   try {
     const images = req.files?.map(f => `/uploads/${f.filename}`) || [];
     let body = { ...req.body, images };
+
+    // Tea: parse weightOptions
     if (req.body.weightOptions) {
       try { body.weightOptions = JSON.parse(req.body.weightOptions); }
       catch { body.weightOptions = []; }
     }
+
+    // Candles: parse sizeOptions
+    if (req.body.sizeOptions) {
+      try { body.sizeOptions = JSON.parse(req.body.sizeOptions); }
+      catch { body.sizeOptions = []; }
+    }
+
+    // Clear candle-specific fields for non-candle products
+    if (body.category !== "Candles") {
+      body.candleCategory = "";
+      body.fragrance      = "";
+      body.sizeOptions    = [];
+    }
+
     const product = await Product.create(body);
     res.status(201).json(product);
   } catch (err) {
@@ -25,29 +41,39 @@ const addProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    // Frontend sends which existing images to KEEP (in order)
     let keptImages = [];
     if (req.body.keptImages) {
       try { keptImages = JSON.parse(req.body.keptImages); }
       catch { keptImages = []; }
     }
 
-    // New uploaded images
-    const newImages = req.files?.map(f => `/uploads/${f.filename}`) || [];
-
-    // Final image list = kept old ones + new ones, max 5
+    const newImages   = req.files?.map(f => `/uploads/${f.filename}`) || [];
     const finalImages = [...keptImages, ...newImages].slice(0, 5);
 
     let body = { ...req.body, images: finalImages };
-    delete body.keptImages; // clean up
+    delete body.keptImages;
 
+    // Tea: parse weightOptions
     if (req.body.weightOptions) {
       try { body.weightOptions = JSON.parse(req.body.weightOptions); }
       catch { body.weightOptions = []; }
     }
 
+    // Candles: parse sizeOptions
+    if (req.body.sizeOptions) {
+      try { body.sizeOptions = JSON.parse(req.body.sizeOptions); }
+      catch { body.sizeOptions = []; }
+    }
+
+    // Clear candle-specific fields for non-candle products
+    if (body.category !== "Candles") {
+      body.candleCategory = "";
+      body.fragrance      = "";
+      body.sizeOptions    = [];
+    }
+
     const product = await Product.findByIdAndUpdate(
-      req.params.id, body, { new: true }
+      req.params.id, { $set: body }, { new: true, strict: false }
     );
     res.status(200).json(product);
   } catch (err) {

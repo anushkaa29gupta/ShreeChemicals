@@ -1,0 +1,574 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  --cream: #f4f8fb;
+  --warm-white: #ffffff;
+  --blue: #5b9ec9;
+  --blue-light: #a8d4ed;
+  --blue-dark: #2d6e96;
+  --blue-pale: #dceef8;
+  --navy: #1a3550;
+  --navy-light: #2d5575;
+  --text-dark: #0e1f2e;
+  --text-mid: #2a4d6b;
+  --text-light: #6a90aa;
+  --accent: #7ec8e3;
+  --border: rgba(91, 158, 201, 0.18);
+  --shadow: rgba(26, 53, 80, 0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.coll-page {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.coll-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0e1f2e;
+}
+
+.coll-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  display: block;
+  opacity: 1;
+}
+
+/* Overlay: dark-blue vignette so text stays readable over any video */
+.coll-hero__overlay {
+  background:
+    linear-gradient(to bottom,
+      rgba(14, 31, 46, 0.20) 0%,   /* reduced from 0.50 */
+      rgba(14, 31, 46, 0.05) 40%,  /* reduced from 0.22 */
+      rgba(14, 31, 46, 0.30) 100%  /* reduced from 0.60 */
+    );
+}
+
+/* Fallback shown when video is missing / loading */
+.coll-hero__fallback {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(91, 158, 201, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 30%, rgba(45, 109, 150, 0.28) 0%, transparent 50%),
+    linear-gradient(160deg, #0e1f2e 0%, #1a3550 40%, #0e1f2e 100%);
+  z-index: -1;
+}
+
+.coll-hero__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+  animation: heroFadeUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.coll-hero__eyebrow {
+  display: inline-block;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 18px;
+  opacity: 0.92;
+}
+
+.coll-hero__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 9vw, 110px);
+  font-weight: 300;
+  line-height: 1.0;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+
+.coll-hero__title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.coll-hero__sub {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.75);
+  max-width: 400px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+.coll-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.55);
+  color: #fff;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+  text-decoration: none;
+}
+
+.coll-hero__cta:hover {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.coll-hero__scroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.6;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(6px); }
+}
+
+.coll-hero__scroll span {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.coll-hero__scroll svg {
+  width: 18px;
+  height: 18px;
+  stroke: #fff;
+}
+
+/* ── SOUND TOGGLE ── */
+.coll-hero__sound-btn {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 2px;
+  color: #fff;
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.coll-hero__sound-btn:hover {
+  background: rgba(91, 158, 201, 0.35);
+  border-color: var(--blue-light);
+}
+
+/* ── TRUST STRIP ── */
+.trust-strip {
+  background: var(--navy);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: center;
+  gap: clamp(20px, 5vw, 72px);
+  flex-wrap: wrap;
+}
+
+.trust-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.78);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.trust-strip__item svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--blue-light);
+  flex-shrink: 0;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(244, 248, 251, 0.97);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 clamp(20px, 5vw, 80px);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-bar::-webkit-scrollbar { display: none; }
+
+.filter-btn {
+  flex-shrink: 0;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.filter-btn:hover { color: var(--blue); }
+
+.filter-btn.active {
+  color: var(--blue-dark);
+  border-bottom-color: var(--blue);
+}
+
+/* ── MAIN CONTENT ── */
+.coll-main {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: clamp(48px, 7vw, 96px) clamp(20px, 5vw, 80px);
+}
+
+/* ── SECTION HEADER ── */
+.section-header {
+  margin-bottom: 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.section-header__eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+
+.section-header__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 300;
+  color: var(--text-dark);
+  line-height: 1.15;
+}
+
+.section-header__count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-light);
+  letter-spacing: 0.08em;
+}
+
+/* ── PRODUCT GRID ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.product-card {
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px var(--shadow);
+}
+
+.product-card__img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #dceef8 0%, #b8d8ee 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-card__img-placeholder {
+  font-size: 48px;
+  opacity: 0.35;
+}
+
+.product-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+.product-card__body {
+  padding: 20px 22px 22px;
+}
+
+.product-card__cat {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.product-card__name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.product-card__desc {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.65;
+  margin-bottom: 16px;
+}
+
+.product-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-card__price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--blue-dark);
+}
+
+.product-card__price span {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-light);
+  margin-left: 4px;
+}
+
+.add-btn {
+  padding: 9px 18px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.add-btn:hover { background: var(--blue-dark); }
+.add-btn.added  { background: #4a7c59; }
+
+/* ── CATEGORY CARDS ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 72px;
+}
+
+.cat-card {
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+.cat-card__bg {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cat-card:hover .cat-card__bg { transform: scale(1.06); }
+
+.cat-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(14,31,46,0.72) 0%, transparent 60%);
+}
+
+.cat-card__body {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+}
+
+.cat-card__emoji {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.cat-card__name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #fff;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.cat-card__count {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.1em;
+}
+
+/* ── BANNER ── */
+.festival-banner {
+  margin-top: 72px;
+  background: linear-gradient(120deg, var(--navy) 0%, #0e1f2e 100%);
+  padding: clamp(40px, 6vw, 72px) clamp(28px, 5vw, 72px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.festival-banner::before {
+  content: '🪔';
+  position: absolute;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 96px;
+  opacity: 0.10;
+  pointer-events: none;
+}
+
+.festival-banner__eyebrow {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 10px;
+}
+
+.festival-banner__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 300;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+
+.festival-banner__sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  max-width: 360px;
+  line-height: 1.7;
+}
+
+.festival-banner__btn {
+  padding: 14px 36px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+.festival-banner__btn:hover { background: var(--blue-dark); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .coll-hero__title { font-size: 52px; }
+  .product-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cat-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 420px) {
+  .product-grid { grid-template-columns: 1fr; }
+  .cat-grid { grid-template-columns: 1fr 1fr; }
+}

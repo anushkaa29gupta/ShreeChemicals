@@ -182,3 +182,5 @@
     border-right-color: var(--border);
   }
 }
+
+.navbar-spacer { height: 76px; }

@@ -638,3 +638,141 @@
   .hm-features        { padding: 4.5rem 1.25rem; }
   .hm-stat-cell       { flex: 1 1 42%; }
 }
+
+/* ══════════════════════════════════════════════════════
+   ADD THESE AT THE BOTTOM OF YOUR EXISTING Home.css
+   ══════════════════════════════════════════════════════ */
+
+/* ── SKELETON LOADER ── */
+.hm-skeleton {
+  pointer-events: none;
+}
+
+.hm-skeleton-img {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(90deg, #f0ebe3 25%, #faf7f2 50%, #f0ebe3 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.hm-skeleton-line {
+  height: 13px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0ebe3 25%, #faf7f2 50%, #f0ebe3 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.hm-skeleton-line.short  { width: 40%; }
+.hm-skeleton-line.medium { width: 65%; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── EMPTY STATE ── */
+.hm-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  font-family: 'Jost', sans-serif;
+}
+
+.hm-empty-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+  filter: grayscale(0.3);
+}
+
+.hm-empty-state h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1a1108;
+  margin-bottom: 10px;
+}
+
+.hm-empty-state p {
+  font-size: 0.95rem;
+  color: #8a7a6a;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+/* ── CANDLE CARD ENHANCEMENTS (home page) ── */
+.hm-product-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+
+.hm-product-fragrance {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--mid);
+  font-weight: 600;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.hm-size-select-label {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mid);
+  font-weight: 700;
+  margin: 8px 0 6px;
+}
+
+.hm-size-selector {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.hm-size-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  background: var(--white);
+  cursor: pointer;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mid);
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+  line-height: 1.3;
+}
+
+.hm-size-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold-dk);
+  background: rgba(200,150,58,0.05);
+}
+
+.hm-size-btn.active {
+  border-color: var(--gold);
+  background: rgba(200,150,58,0.1);
+  color: var(--gold-dk);
+}
+
+.hm-size-btn-price {
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 1px;
+}
