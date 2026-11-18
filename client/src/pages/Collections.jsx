@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"; // add useEffect
-import "./collections.css";
+import "./Collections.css";
 
 
 const CATEGORIES = ["All", "Candles", "Incense", "Teas", "Gift Sets"];
