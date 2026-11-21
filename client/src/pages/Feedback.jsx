@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import "./Feedback.css";
 
-const API = "http://localhost:5000/api";
+const API = "https://shreechemicals.onrender.com/api";
 
 const StarDisplay = ({ rating }) => (
   <div className="fb-stars">

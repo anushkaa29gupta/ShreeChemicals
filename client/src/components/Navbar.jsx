@@ -1,5 +1,5 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/chemicals/logo.png";
 import "./Navbar.css";
 
@@ -35,7 +35,7 @@ const Navbar = ({ cartCount = 0 }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res  = await fetch("http://localhost:5000/api/admin/products");
+        const res  = await fetch("https://shreechemicals.onrender.com/api/admin/products");
         const data = await res.json();
         setAllProducts(data.filter((p) => p.isAvailable));
       } catch { console.error("Failed to fetch products for search"); }

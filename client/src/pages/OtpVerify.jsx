@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OtpVerify.css";
 
@@ -31,7 +31,7 @@ const OtpVerify = () => {
     if (otpString.length < 6) { setError("Please enter all 6 digits."); return; }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/verify-email-otp", {
+      const res = await fetch("https://shreechemicals.onrender.com/api/auth/verify-email-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otpString }),
@@ -54,7 +54,7 @@ const OtpVerify = () => {
   const handleResend = async () => {
     setError(""); setMessage("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/resend-verify-otp", {
+      const res = await fetch("https://shreechemicals.onrender.com/api/auth/resend-verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

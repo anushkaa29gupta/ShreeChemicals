@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import "./Cart.css";
 import "./OrderConfirmation.css";
 
@@ -18,7 +18,7 @@ const Cart = () => {
     const loadCart = async () => {
       if (!token) { setLoading(false); return; }
       try {
-        const res = await fetch("http://localhost:5000/api/cart", {
+        const res = await fetch("https://shreechemicals.onrender.com/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -31,7 +31,7 @@ const Cart = () => {
 
   const handleRemove = async (itemId) => {
     try {
-      await fetch(`http://localhost:5000/api/cart/remove/${itemId}`, {
+      await fetch(`https://shreechemicals.onrender.com/api/cart/remove/${itemId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -42,7 +42,7 @@ const Cart = () => {
   const handleQuantity = async (itemId, quantity) => {
     if (quantity < 1) { handleRemove(itemId); return; }
     try {
-      await fetch(`http://localhost:5000/api/cart/update/${itemId}`, {
+      await fetch(`https://shreechemicals.onrender.com/api/cart/update/${itemId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ quantity }),
@@ -53,7 +53,7 @@ const Cart = () => {
 
   const handleClear = async () => {
     try {
-      await fetch("http://localhost:5000/api/cart/clear", {
+      await fetch("https://shreechemicals.onrender.com/api/cart/clear", {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -65,7 +65,7 @@ const Cart = () => {
     setCheckoutLoading(true);
     setCheckoutMsg("");
     try {
-      const res = await fetch("http://localhost:5000/api/orders/place", {
+      const res = await fetch("https://shreechemicals.onrender.com/api/orders/place", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -154,7 +154,7 @@ const Cart = () => {
                   <div className="cart-item-img-wrap">
                     {item.image ? (
                       <img
-                        src={item.isStatic ? item.image : `http://localhost:5000${item.image}`}
+                        src={item.isStatic ? item.image : `https://shreechemicals.onrender.com${item.image}`}
                         alt={item.name}
                         className="cart-item-img"
                       />

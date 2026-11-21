@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.css";
 
@@ -28,7 +28,7 @@ const AdminOtpVerify = () => {
     if (otpString.length < 6) { setError("Enter all 6 digits."); return; }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/verify-otp", {
+      const res = await fetch("https://shreechemicals.onrender.com/api/admin/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otpString }),

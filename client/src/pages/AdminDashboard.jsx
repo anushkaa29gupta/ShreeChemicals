@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
 
@@ -21,7 +21,7 @@ const useOrderNotifications = (token) => {
 
     const fetchCounts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/orders/all", {
+        const res = await fetch("https://shreechemicals.onrender.com/api/orders/all", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const orders = await res.json();
@@ -87,7 +87,7 @@ const OrdersTab = ({ token }) => {
 
   const loadOrders = async () => {
     try {
-      const res  = await fetch("http://localhost:5000/api/orders/all", {
+      const res  = await fetch("https://shreechemicals.onrender.com/api/orders/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -102,7 +102,7 @@ const OrdersTab = ({ token }) => {
 
   const handleAction = async (orderId, action) => {
     try {
-      const res  = await fetch(`http://localhost:5000/api/orders/${action}/${orderId}`, {
+      const res  = await fetch(`https://shreechemicals.onrender.com/api/orders/${action}/${orderId}`, {
         method: "PUT", headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -116,7 +116,7 @@ const OrdersTab = ({ token }) => {
 
   const handleClearAll = async () => {
     try {
-      const res  = await fetch("http://localhost:5000/api/orders/clear-all", {
+      const res  = await fetch("https://shreechemicals.onrender.com/api/orders/clear-all", {
         method: "DELETE", headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -225,7 +225,7 @@ const FeedbackTab = ({ token }) => {
   const loadFeedbacks = async () => {
     setLoading(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/orders/feedbacks");
+      const res  = await fetch("https://shreechemicals.onrender.com/api/orders/feedbacks");
       const data = await res.json();
       setFeedbacks(Array.isArray(data) ? data : []);
     } catch { setMessage("Failed to load feedbacks."); }
@@ -236,7 +236,7 @@ const FeedbackTab = ({ token }) => {
 
   const handleDelete = async (orderId) => {
     try {
-      const res  = await fetch(`http://localhost:5000/api/orders/feedback/${orderId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch(`https://shreechemicals.onrender.com/api/orders/feedback/${orderId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (res.ok) { setMessage(data.message); setDeleteConfirm(null); setFeedbacks(prev => prev.filter(f => f._id !== orderId)); }
       else setMessage(data.message || "Delete failed.");
@@ -324,7 +324,7 @@ const UsersTab = ({ token }) => {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/admin/users", { headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch("https://shreechemicals.onrender.com/api/admin/users", { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setUsers(Array.isArray(data) ? data : []);
     } catch { setMessage("Failed to load users."); }
@@ -335,7 +335,7 @@ const UsersTab = ({ token }) => {
 
   const handleDelete = async (userId) => {
     try {
-      const res  = await fetch(`http://localhost:5000/api/admin/users/${userId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const res  = await fetch(`https://shreechemicals.onrender.com/api/admin/users/${userId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (res.ok) { setMessage(data.message); setDeleteConfirm(null); setUsers(prev => prev.filter(u => u._id !== userId)); }
       else setMessage(data.message || "Delete failed.");
@@ -505,7 +505,7 @@ const AdminDashboard = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const res  = await fetch("http://localhost:5000/api/admin/products");
+        const res  = await fetch("https://shreechemicals.onrender.com/api/admin/products");
         const data = await res.json();
         if (!cancelled) setProducts(data);
       } catch { if (!cancelled) setMessage("Failed to load products."); }
@@ -518,7 +518,7 @@ const AdminDashboard = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res  = await fetch("http://localhost:5000/api/admin/products");
+      const res  = await fetch("https://shreechemicals.onrender.com/api/admin/products");
       const data = await res.json();
       setProducts(data);
     } catch { setMessage("Failed to load products."); }
@@ -609,7 +609,7 @@ const AdminDashboard = () => {
     const newPreviews = form.allPreviews.filter(p => p.type === "new");
     newPreviews.forEach(p => formData.append("images", form.imageFiles[p.fileIndex]));
 
-    const url    = editProduct ? `http://localhost:5000/api/admin/products/${editProduct._id}` : "http://localhost:5000/api/admin/products";
+    const url    = editProduct ? `https://shreechemicals.onrender.com/api/admin/products/${editProduct._id}` : "https://shreechemicals.onrender.com/api/admin/products";
     const method = editProduct ? "PUT" : "POST";
 
     try {
@@ -627,7 +627,7 @@ const AdminDashboard = () => {
 
   const handleEdit = (product) => {
     setEditProduct(product);
-    const existingPreviews = (product.images || []).map(serverPath => ({ type: "existing", src: `http://localhost:5000${serverPath}`, serverPath }));
+    const existingPreviews = (product.images || []).map(serverPath => ({ type: "existing", src: `https://shreechemicals.onrender.com${serverPath}`, serverPath }));
     setForm({
       name:           product.name,
       description:    product.description,
@@ -649,7 +649,7 @@ const AdminDashboard = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`https://shreechemicals.onrender.com/api/admin/products/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) { setMessage("Product deleted."); setDeleteConfirm(null); fetchProducts(); }
     } catch { setMessage("Failed to delete."); }
   };
@@ -882,7 +882,7 @@ const AdminDashboard = () => {
                     <tr key={p._id}>
                       <td>
                         {p.images?.length > 0
-                          ? <img src={`http://localhost:5000${p.images[0]}`} alt={p.name} className="adm-product-img" />
+                          ? <img src={`https://shreechemicals.onrender.com${p.images[0]}`} alt={p.name} className="adm-product-img" />
                           : <div className="adm-no-img">{categoryIcon[p.category] || "📦"}</div>}
                       </td>
                       <td>

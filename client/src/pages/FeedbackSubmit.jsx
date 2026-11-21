@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./FeedbackSubmit.css";
 
-const API = "http://localhost:5000/api";
+const API = "https://shreechemicals.onrender.com/api";
 
 const FeedbackSubmit = () => {
   const { orderId } = useParams();

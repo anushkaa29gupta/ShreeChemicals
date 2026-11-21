@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import Navbar from "../components/Navbar";
+import { useEffect, useRef, useState } from "react";
+import heroImg from "../assets/chemicals/heroImg.png";
 import Banner from "../components/Banner";
 import Footer from "../components/Footer";
 import LoginPopup from "../components/LoginPopup";
+import Navbar from "../components/Navbar";
 import "./Home.css";
-import heroImg from "../assets/chemicals/heroImg.png";
 
 const features = [
   {
@@ -90,7 +90,7 @@ const Home = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const res  = await fetch("http://localhost:5000/api/admin/products");
+        const res  = await fetch("https://shreechemicals.onrender.com/api/admin/products");
         const data = await res.json();
         setProducts(data.filter((p) => p.isAvailable));
       } catch {
@@ -106,7 +106,7 @@ const Home = () => {
     if (!token) return;
     const load = async () => {
       try {
-        const res  = await fetch("http://localhost:5000/api/cart", {
+        const res  = await fetch("https://shreechemicals.onrender.com/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -121,7 +121,7 @@ const Home = () => {
   const handleAddToCart = async (product) => {
     if (!token) { setShowLoginPopup(true); return; }
     try {
-      const res = await fetch("http://localhost:5000/api/cart/add", {
+      const res = await fetch("https://shreechemicals.onrender.com/api/cart/add", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -295,7 +295,7 @@ const Home = () => {
             ) : sorted.map((p, i) => {
               const idx    = activeImageIndex[p._id] || 0;
               const imgs   = p.images || [];
-              const imgSrc = imgs[idx] ? `http://localhost:5000${imgs[idx]}` : null;
+              const imgSrc = imgs[idx] ? `https://shreechemicals.onrender.com${imgs[idx]}` : null;
               const isAdded = addedItems[p._id];
 
               return (

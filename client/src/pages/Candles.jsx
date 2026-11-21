@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoginPopup from "../components/LoginPopup";
-import "./Home.css";
+import Navbar from "../components/Navbar";
 import "./CategoryPage.css";
+import "./Home.css";
 
 const SIZE_LABELS  = { small: "Small",  medium: "Medium",  large: "Large"  };
 const SIZE_DIA     = { small: '2.5"',   medium: '3.0"',    large: '3.0"'   };
@@ -28,7 +28,7 @@ const Candles = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res  = await fetch("http://localhost:5000/api/admin/products");
+        const res  = await fetch("https://shreechemicals.onrender.com/api/admin/products");
         const data = await res.json();
         setProducts(data.filter(p => p.isAvailable && p.category === "Candles"));
       } catch { console.error("Failed to fetch candles"); }
@@ -40,7 +40,7 @@ const Candles = () => {
     if (!token) return;
     const fetchCart = async () => {
       try {
-        const res  = await fetch("http://localhost:5000/api/cart", {
+        const res  = await fetch("https://shreechemicals.onrender.com/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -98,7 +98,7 @@ const Candles = () => {
     const price        = getPrice(product);
 
     try {
-      const res = await fetch("http://localhost:5000/api/cart/add", {
+      const res = await fetch("https://shreechemicals.onrender.com/api/cart/add", {
         method:  "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -202,7 +202,7 @@ const Candles = () => {
             ) : sorted.map(p => {
               const idx          = activeImageIndex[p._id] || 0;
               const imgs         = p.images || [];
-              const imgSrc       = imgs[idx] ? `http://localhost:5000${imgs[idx]}` : null;
+              const imgSrc       = imgs[idx] ? `https://shreechemicals.onrender.com${imgs[idx]}` : null;
               const selectedSize = getSelectedSize(p);
               const currentPrice = getPrice(p);
               const hasSizes     = p.sizeOptions?.length > 0;

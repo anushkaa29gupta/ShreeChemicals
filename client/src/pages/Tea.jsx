@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import LoginPopup from "../components/LoginPopup";
-import "./Home.css";
+import Navbar from "../components/Navbar";
 import "./CategoryPage.css";
+import "./Home.css";
 
 const Tea = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Tea = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/products");
+        const res = await fetch("https://shreechemicals.onrender.com/api/admin/products");
         const data = await res.json();
         setProducts(data.filter((p) => p.isAvailable && p.category === "Tea"));
       } catch { console.error("Failed to fetch tea products"); }
@@ -32,7 +32,7 @@ const Tea = () => {
     if (!token) return;
     const fetchCart = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/cart", {
+        const res = await fetch("https://shreechemicals.onrender.com/api/cart", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -88,7 +88,7 @@ const Tea = () => {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/cart/add", {
+    const res = await fetch("https://shreechemicals.onrender.com/api/cart/add", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({
@@ -168,7 +168,7 @@ const Tea = () => {
             ) : sorted.map((p) => {
               const idx = activeImageIndex[p._id] || 0;
               const imgs = p.images || [];
-              const imgSrc = `http://localhost:5000${imgs[idx]}`;
+              const imgSrc = `https://shreechemicals.onrender.com${imgs[idx]}`;
               const weightOpts = getWeightOpts(p);
               const selected = selectedWeight[p._id];
               const isAdded = addedItems[p._id];

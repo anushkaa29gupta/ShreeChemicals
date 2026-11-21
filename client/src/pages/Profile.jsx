@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 import "./Profile.css";
 
-const API = "http://localhost:5000/api";
+const API = "https://shreechemicals.onrender.com/api";
 
 const Profile = () => {
   const navigate = useNavigate();
