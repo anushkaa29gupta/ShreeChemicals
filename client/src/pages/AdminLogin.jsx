@@ -23,6 +23,7 @@ const AdminLogin = () => {
     if (passError) { setError(passError); return; }
     setLoading(true);
     try {
+      //const res = await fetch("https://shreechemicals.onrender.com/api/admin/login", {
       const res = await fetch("https://shreechemicals.onrender.com/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
